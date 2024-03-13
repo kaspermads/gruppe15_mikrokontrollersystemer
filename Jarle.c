@@ -6,7 +6,7 @@
  */ 
 
 #include <avr/io.h>
-
+//pikker digg
 
 int main(void)
 {
