@@ -134,7 +134,7 @@ int main(void)
 		{
 			// Read potentiometer
 			uint16_t adc_value = ADC0_read();
-			// Convert ADC-value to PWM signal for angle between 0 and 90
+			// Convert ADC-value to PWM signal
 			uint16_t fanSpeed = ((20.0/1023.0)*adc_value);
 			printf("%d\r\n", adc_value);
 			printf("%d\r\n", fanSpeed);
