@@ -12,6 +12,18 @@ git add . //Velger alt arbeidet du har gjort
 
 git commit -m "Melding som beskriver hva du laster opp" //  
 
-git push //Dytter alt du har gjort/valgt opp til GitHub
+git push //Dytter alt du har gjort/valgt opp til GitHub  
+
+Hvis Vim dukker opp:
+
+trykk i  
+
+Skriv en melding uten ""
+
+Trykk ESC knappen  
+
+skriv ":wq" og trykk Enter  
+
+
 
 
