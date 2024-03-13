@@ -1,7 +1,0 @@
-
-Åpne bash(bæsj) 
-cd onedrive 
-komme seg inn i prosjektmappa
-git add .
-git commit -m "kommentar til endring"
-git push
