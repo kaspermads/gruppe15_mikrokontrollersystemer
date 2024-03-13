@@ -7,8 +7,8 @@
 // PWM config
 #define PERIOD_FREQUENCY 20 // 0x01A0
 // Calculated based on duty cycle(%) = Ton/(Tperiod)*100%
-#define DUTY_CYCLE_MIN_VALUE 0 // MIN value for 0 degrees
-#define DUTY_CYCLE_MAX_VALUE 10 // MAX value for 90 degrees
+#define DUTY_CYCLE_MIN_VALUE 0 // MIN value
+#define DUTY_CYCLE_MAX_VALUE 20 // MAX value
 
 // ADC config
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5) // Macro for å beregne baudrate
@@ -24,7 +24,7 @@
 // Preprocessing
 void USART3_init(void);	// Initialize USART
 void USART3_printChar(char c, FILE *stream); // Send characters
-void TCA0_init(void);	// 
+void TCA0_init(void);
 void PORT_init(void);
 void ADC0_init(void);
 uint16_t ADC0_read(void);
@@ -33,32 +33,27 @@ bool ADC0_conersionDone(void);
 
 void TCA0_init(void)
 {
-	/* set waveform output on PORT D */
+	//set waveform output on PORT D
 	PORTMUX.TCAROUTEA = PORTMUX_TCA0_PORTD_gc;
-
-	TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP0EN_bm /* enable compare
-	channel 0 */
-	| TCA_SINGLE_WGMODE_DSBOTTOM_gc; /* set dual-slope PWM
-	mode */
-
+	
+	// enable compare channel 0 and set dual-slope PWM mode
+	TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP0EN_bm | TCA_SINGLE_WGMODE_DSBOTTOM_gc;
+	
 	// set PWM frequency
 	TCA0.SINGLE.PERBUF = PERIOD_FREQUENCY;
 	
-	TCA0.SINGLE.CMP0BUF = DUTY_CYCLE_MIN_VALUE; // *Controls width PWM-signal
+	TCA0.SINGLE.CMP0BUF = DUTY_CYCLE_MIN_VALUE; // Controls width PWM-signal
 
-	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV4_gc /* set clock source
-	(sys_clk/4) */
-	| TCA_SINGLE_ENABLE_bm; /* start timer */
+	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV4_gc | TCA_SINGLE_ENABLE_bm;// set clock source(sys_clk/4) and start timer
 	
 }
 void PORT_init(void)
 {
-	// Setter PIN0 som output
+	// Setter PIN0 som output (PWM-out)
 	PORTD.DIRSET = PIN0_bm;
 
 	// Setter PIN1 som input (TACH)
 	PORTD.DIRCLR = PIN1_bm;
-
 }
 void ADC0_init(void)
 {
@@ -141,14 +136,10 @@ int main(void)
 			uint16_t adc_value = ADC0_read();
 			// Convert ADC-value to PWM signal for angle between 0 and 90
 			uint16_t fanSpeed = ((20.0/1023.0)*adc_value);
-			printf(adc_value);
+			printf("%d\r\n", adc_value);
+			printf("%d\r\n", fanSpeed);
 			printf("\r\n");
-			TCA0.SINGLE.CMP0BUF = fanSpeed; // *Controls width PWM-signal
+			TCA0.SINGLE.CMP0BUF = fanSpeed; // Controls width PWM-signal
 		}
-		
-		/*
-		TCA0.SINGLE.CMP0BUF = DUTY_CYCLE_MAX_VALUE; // *Controls width PWM-signal
-		_delay_ms(5000);
-		*/
 	}
 }
