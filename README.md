@@ -3,7 +3,8 @@ Jarle, Lars-Kristian og Kasper (Gruppe 15) sitt repo for prosjektet i IELET2111 
 
 For Jarle og Lars-Kristian
 HOW TO: 
-Åpne Git Bash
+Åpne Git Bash  
+
 Naviger deg inn i riktig mappe: cd Desktop/Prosjekt/Riktig_Mappe eller Onedrive/Skrivebord/Riktig_Mappe
 git add . //Velger alt arbeidet du har gjort
 git commit -m "Melding som beskriver hva du laster opp" //
