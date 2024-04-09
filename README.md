@@ -1,5 +1,6 @@
 # gruppe15_mikrokontrollersystemer
 Jarle: USART
+
 Lars-Christian og Kasper: PWM styring av opptil 8 vifter og monitorering av turteller for prediktering av tidlig feil.
 Også ta en titt på I2C
 
