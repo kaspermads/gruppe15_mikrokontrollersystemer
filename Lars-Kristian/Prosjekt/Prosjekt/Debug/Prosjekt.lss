@@ -19,15 +19,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 00002f2b  00000000  00000000  00005612  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000055c  00000000  00000000  0000853d  2**0
+  8 .debug_line   00000574  00000000  00000000  0000853d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  0000010c  00000000  00000000  00008a9c  2**2
+  9 .debug_frame  0000010c  00000000  00000000  00008ab4  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00002fbb  00000000  00000000  00008ba8  2**0
+ 10 .debug_str    00002fbb  00000000  00000000  00008bc0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000121  00000000  00000000  0000bb63  2**0
+ 11 .debug_loc    00000121  00000000  00000000  0000bb7b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000060  00000000  00000000  0000bc84  2**0
+ 12 .debug_ranges 00000060  00000000  00000000  0000bc9c  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -47,7 +47,7 @@ Disassembly of section .text:
   2c:	0c 94 99 00 	jmp	0x132	; 0x132 <__bad_interrupt>
   30:	0c 94 99 00 	jmp	0x132	; 0x132 <__bad_interrupt>
   34:	0c 94 99 00 	jmp	0x132	; 0x132 <__bad_interrupt>
-  38:	0c 94 b8 00 	jmp	0x170	; 0x170 <__vector_14>
+  38:	0c 94 f4 00 	jmp	0x1e8	; 0x1e8 <__vector_14>
   3c:	0c 94 99 00 	jmp	0x132	; 0x132 <__bad_interrupt>
   40:	0c 94 99 00 	jmp	0x132	; 0x132 <__bad_interrupt>
   44:	0c 94 99 00 	jmp	0x132	; 0x132 <__bad_interrupt>
@@ -154,238 +154,242 @@ void USART3_printChar(char c, FILE *stream)
  13e:	80 93 62 08 	sts	0x0862, r24	; 0x800862 <__TEXT_REGION_LENGTH__+0x7e0862>
  142:	08 95       	ret
 
-00000144 <TCB0_init>:
-uint16_t readPulseWidth;
-int readFreq;
+00000144 <TCA0_init>:
 
-void TCB0_init(void)
-{
-	PORTB.DIR &= ~PIN4_bm;
- 144:	e0 e2       	ldi	r30, 0x20	; 32
- 146:	f4 e0       	ldi	r31, 0x04	; 4
- 148:	80 81       	ld	r24, Z
- 14a:	8f 7e       	andi	r24, 0xEF	; 239
- 14c:	80 83       	st	Z, r24
-	PORTB.PIN4CTRL = PORT_PULLUPEN_bm;
- 14e:	88 e0       	ldi	r24, 0x08	; 8
- 150:	84 8b       	std	Z+20, r24	; 0x14
-	
-	TCB0.CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_TCA0_gc;	// enable timer/counter TCB0 and use clock from TCA0
- 152:	e0 e0       	ldi	r30, 0x00	; 0
- 154:	fb e0       	ldi	r31, 0x0B	; 11
- 156:	85 e0       	ldi	r24, 0x05	; 5
- 158:	80 83       	st	Z, r24
-	TCB0.CTRLB = TCB_CNTMODE_PW_gc;	// set timer mod to input capture frequency and PWM measurement mode
- 15a:	84 e0       	ldi	r24, 0x04	; 4
- 15c:	81 83       	std	Z+1, r24	; 0x01
-	
-	TCB0.INTCTRL = TCB_CAPT_bm; // interrupt enabled for capture
- 15e:	81 e0       	ldi	r24, 0x01	; 1
- 160:	85 83       	std	Z+5, r24	; 0x05
-	
-	TCB0.EVCTRL = TCB_CAPTEI_bm; // Capture event input enable
- 162:	84 83       	std	Z+4, r24	; 0x04
-	
-	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
-	EVSYS.CHANNEL0 = EVSYS_CHANNEL0_PORTB_PIN4_gc; //	input event channel 0, port b on pin 4
- 164:	e0 e0       	ldi	r30, 0x00	; 0
- 166:	f2 e0       	ldi	r31, 0x02	; 2
- 168:	9c e4       	ldi	r25, 0x4C	; 76
- 16a:	90 8b       	std	Z+16, r25	; 0x10
-	EVSYS.USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc; // connects channel 0(portb pin0????) specific to TCB0 input capture mode
- 16c:	86 af       	std	Z+62, r24	; 0x3e
- 16e:	08 95       	ret
-
-00000170 <__vector_14>:
-	//   CHANNEL0
-	
-}
-
-ISR(TCB0_INT_vect)
-{
- 170:	1f 92       	push	r1
- 172:	0f 92       	push	r0
- 174:	0f b6       	in	r0, 0x3f	; 63
- 176:	0f 92       	push	r0
- 178:	11 24       	eor	r1, r1
- 17a:	0b b6       	in	r0, 0x3b	; 59
- 17c:	0f 92       	push	r0
- 17e:	8f 93       	push	r24
- 180:	9f 93       	push	r25
- 182:	ef 93       	push	r30
- 184:	ff 93       	push	r31
-	TCB0.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
- 186:	e0 e0       	ldi	r30, 0x00	; 0
- 188:	fb e0       	ldi	r31, 0x0B	; 11
- 18a:	81 e0       	ldi	r24, 0x01	; 1
- 18c:	86 83       	std	Z+6, r24	; 0x06
-	
-	// DO SOMETHING, maybe read from TCB0.CCMP????
-	//TCB0.CCMP // holds the compare, capture, and top value
-	readPulseWidth = TCB0.CCMP;
- 18e:	84 85       	ldd	r24, Z+12	; 0x0c
- 190:	95 85       	ldd	r25, Z+13	; 0x0d
- 192:	80 93 18 40 	sts	0x4018, r24	; 0x804018 <readPulseWidth>
- 196:	90 93 19 40 	sts	0x4019, r25	; 0x804019 <readPulseWidth+0x1>
-	
-}
- 19a:	ff 91       	pop	r31
- 19c:	ef 91       	pop	r30
- 19e:	9f 91       	pop	r25
- 1a0:	8f 91       	pop	r24
- 1a2:	0f 90       	pop	r0
- 1a4:	0b be       	out	0x3b, r0	; 59
- 1a6:	0f 90       	pop	r0
- 1a8:	0f be       	out	0x3f, r0	; 63
- 1aa:	0f 90       	pop	r0
- 1ac:	1f 90       	pop	r1
- 1ae:	18 95       	reti
-
-000001b0 <TCA0_init>:
-// KAN FJERNES NED TIL HIT
 
 void TCA0_init(void)
 {
 	//set waveform output on PORT D
 	PORTMUX.TCAROUTEA = PORTMUX_TCA0_PORTD_gc;
- 1b0:	83 e0       	ldi	r24, 0x03	; 3
- 1b2:	80 93 e6 05 	sts	0x05E6, r24	; 0x8005e6 <__TEXT_REGION_LENGTH__+0x7e05e6>
+ 144:	83 e0       	ldi	r24, 0x03	; 3
+ 146:	80 93 e6 05 	sts	0x05E6, r24	; 0x8005e6 <__TEXT_REGION_LENGTH__+0x7e05e6>
 	
 	// enable compare channel 0, 1 and set single-slope PWM mode
 	TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP0EN_bm | TCA_SINGLE_CMP1EN_bm | TCA_SINGLE_WGMODE_SINGLESLOPE_gc;
- 1b6:	e0 e0       	ldi	r30, 0x00	; 0
- 1b8:	fa e0       	ldi	r31, 0x0A	; 10
- 1ba:	83 e3       	ldi	r24, 0x33	; 51
- 1bc:	81 83       	std	Z+1, r24	; 0x01
+ 14a:	e0 e0       	ldi	r30, 0x00	; 0
+ 14c:	fa e0       	ldi	r31, 0x0A	; 10
+ 14e:	83 e3       	ldi	r24, 0x33	; 51
+ 150:	81 83       	std	Z+1, r24	; 0x01
 	
 	 // enable split mode
     TCA0.SPLIT.CTRLD = TCA_SPLIT_SPLITM_bm; 
- 1be:	91 e0       	ldi	r25, 0x01	; 1
- 1c0:	93 83       	std	Z+3, r25	; 0x03
+ 152:	91 e0       	ldi	r25, 0x01	; 1
+ 154:	93 83       	std	Z+3, r25	; 0x03
 	
 	// enable compare channel 0 for the higher byte, enable compare channel 0 for the lower byte
 	TCA0.SPLIT.CTRLB = TCA_SPLIT_HCMP0EN_bm | TCA_SPLIT_LCMP0EN_bm | TCA_SPLIT_HCMP1EN_bm | TCA_SPLIT_LCMP1EN_bm;    
- 1c2:	81 83       	std	Z+1, r24	; 0x01
+ 156:	81 83       	std	Z+1, r24	; 0x01
 	
-	  /* set the PWM frequencies and duty cycles */
+	
+	// L0 = PIN0, L1=PIN1, H0=PIN3, H1=PIN4
+	// set the PWM frequencies and duty cycles
     TCA0.SPLIT.LPER = PERIOD_FREQUENCY;                          
- 1c4:	84 e1       	ldi	r24, 0x14	; 20
- 1c6:	86 a3       	std	Z+38, r24	; 0x26
+ 158:	84 e1       	ldi	r24, 0x14	; 20
+ 15a:	86 a3       	std	Z+38, r24	; 0x26
     TCA0.SPLIT.LCMP0 = DUTY_CYCLE_MIN_VALUE;                           
- 1c8:	10 a6       	std	Z+40, r1	; 0x28
+ 15c:	10 a6       	std	Z+40, r1	; 0x28
     TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
- 1ca:	87 a3       	std	Z+39, r24	; 0x27
+ 15e:	87 a3       	std	Z+39, r24	; 0x27
     TCA0.SPLIT.HCMP0 = DUTY_CYCLE_MIN_VALUE;
- 1cc:	11 a6       	std	Z+41, r1	; 0x29
+ 160:	11 a6       	std	Z+41, r1	; 0x29
 	
 	//TCA0.SPLIT.LPER = PERIOD_FREQUENCY;                          
     TCA0.SPLIT.LCMP1 = DUTY_CYCLE_MIN_VALUE;                           
- 1ce:	12 a6       	std	Z+42, r1	; 0x2a
+ 162:	12 a6       	std	Z+42, r1	; 0x2a
     //TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
     TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE; 
- 1d0:	13 a6       	std	Z+43, r1	; 0x2b
+ 164:	13 a6       	std	Z+43, r1	; 0x2b
 	
-	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc    /* set clock source (sys_clk/16) */
- 1d2:	85 e0       	ldi	r24, 0x05	; 5
- 1d4:	80 83       	st	Z, r24
- 1d6:	08 95       	ret
+	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/16), and start timer         
+ 166:	85 e0       	ldi	r24, 0x05	; 5
+ 168:	80 83       	st	Z, r24
+ 16a:	08 95       	ret
 
-000001d8 <PORT_init>:
-	
+0000016c <TCB0_init>:
 }
-void PORT_init(void)
+
+
+void TCB0_init(void)
 {
-	// Setter PIN0 som output (PWM-out)
-	PORTD.DIRSET = PIN0_bm | PIN1_bm | PIN4_bm | PIN3_bm;
- 1d8:	8b e1       	ldi	r24, 0x1B	; 27
- 1da:	80 93 61 04 	sts	0x0461, r24	; 0x800461 <__TEXT_REGION_LENGTH__+0x7e0461>
- 1de:	08 95       	ret
+	PORTB.DIR &= ~PIN4_bm;
+ 16c:	e0 e2       	ldi	r30, 0x20	; 32
+ 16e:	f4 e0       	ldi	r31, 0x04	; 4
+ 170:	80 81       	ld	r24, Z
+ 172:	8f 7e       	andi	r24, 0xEF	; 239
+ 174:	80 83       	st	Z, r24
+	PORTB.PIN4CTRL = PORT_PULLUPEN_bm;
+ 176:	88 e0       	ldi	r24, 0x08	; 8
+ 178:	84 8b       	std	Z+20, r24	; 0x14
+	
+	TCB0.CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_TCA0_gc;	// enable timer/counter TCB0 and use clock from TCA0
+ 17a:	e0 e0       	ldi	r30, 0x00	; 0
+ 17c:	fb e0       	ldi	r31, 0x0B	; 11
+ 17e:	85 e0       	ldi	r24, 0x05	; 5
+ 180:	80 83       	st	Z, r24
+	TCB0.CTRLB = TCB_CNTMODE_PW_gc;	// set timer mod to input capture frequency and PWM measurement mode
+ 182:	84 e0       	ldi	r24, 0x04	; 4
+ 184:	81 83       	std	Z+1, r24	; 0x01
+	
+	TCB0.INTCTRL = TCB_CAPT_bm; // interrupt enabled for capture
+ 186:	81 e0       	ldi	r24, 0x01	; 1
+ 188:	85 83       	std	Z+5, r24	; 0x05
+	
+	TCB0.EVCTRL = TCB_CAPTEI_bm; // Capture event input enable
+ 18a:	84 83       	std	Z+4, r24	; 0x04
+	
+	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
+	EVSYS.CHANNEL0 = EVSYS_CHANNEL0_PORTB_PIN4_gc; //	input event channel 0, port b on pin 4
+ 18c:	e0 e0       	ldi	r30, 0x00	; 0
+ 18e:	f2 e0       	ldi	r31, 0x02	; 2
+ 190:	9c e4       	ldi	r25, 0x4C	; 76
+ 192:	90 8b       	std	Z+16, r25	; 0x10
+	EVSYS.USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc; // connects channel 0(portb pin0????) specific to TCB0 input capture mode
+ 194:	86 af       	std	Z+62, r24	; 0x3e
+ 196:	08 95       	ret
 
-000001e0 <ADC0_init>:
-	//PORTD.DIRCLR = PIN1_bm;
-}
+00000198 <ADC0_init>:
+bool ADC0_conersionDone(void);
+
 void ADC0_init(void)
 {
 	/* Disable digital input buffer */
 	PORTD.PIN6CTRL &= ~PORT_ISC_gm;
- 1e0:	e0 e6       	ldi	r30, 0x60	; 96
- 1e2:	f4 e0       	ldi	r31, 0x04	; 4
- 1e4:	86 89       	ldd	r24, Z+22	; 0x16
- 1e6:	88 7f       	andi	r24, 0xF8	; 248
- 1e8:	86 8b       	std	Z+22, r24	; 0x16
+ 198:	e0 e6       	ldi	r30, 0x60	; 96
+ 19a:	f4 e0       	ldi	r31, 0x04	; 4
+ 19c:	86 89       	ldd	r24, Z+22	; 0x16
+ 19e:	88 7f       	andi	r24, 0xF8	; 248
+ 1a0:	86 8b       	std	Z+22, r24	; 0x16
 	PORTD.PIN6CTRL |= PORT_ISC_INPUT_DISABLE_gc;
- 1ea:	86 89       	ldd	r24, Z+22	; 0x16
- 1ec:	84 60       	ori	r24, 0x04	; 4
- 1ee:	86 8b       	std	Z+22, r24	; 0x16
+ 1a2:	86 89       	ldd	r24, Z+22	; 0x16
+ 1a4:	84 60       	ori	r24, 0x04	; 4
+ 1a6:	86 8b       	std	Z+22, r24	; 0x16
 
 	/* Disable pull-up resistor */
 	PORTD.PIN6CTRL &= ~PORT_PULLUPEN_bm;
- 1f0:	86 89       	ldd	r24, Z+22	; 0x16
- 1f2:	87 7f       	andi	r24, 0xF7	; 247
- 1f4:	86 8b       	std	Z+22, r24	; 0x16
+ 1a8:	86 89       	ldd	r24, Z+22	; 0x16
+ 1aa:	87 7f       	andi	r24, 0xF7	; 247
+ 1ac:	86 8b       	std	Z+22, r24	; 0x16
 
 	ADC0.CTRLC = ADC_PRESC_DIV4_gc; /* CLK_PER divided by 4 */
- 1f6:	e0 e0       	ldi	r30, 0x00	; 0
- 1f8:	f6 e0       	ldi	r31, 0x06	; 6
- 1fa:	81 e0       	ldi	r24, 0x01	; 1
- 1fc:	82 83       	std	Z+2, r24	; 0x02
+ 1ae:	e0 e0       	ldi	r30, 0x00	; 0
+ 1b0:	f6 e0       	ldi	r31, 0x06	; 6
+ 1b2:	81 e0       	ldi	r24, 0x01	; 1
+ 1b4:	82 83       	std	Z+2, r24	; 0x02
 	
 	VREF.ADC0REF = VREF_REFSEL_VDD_gc ; /* VDD as reference */
- 1fe:	85 e0       	ldi	r24, 0x05	; 5
- 200:	80 93 b0 00 	sts	0x00B0, r24	; 0x8000b0 <__TEXT_REGION_LENGTH__+0x7e00b0>
+ 1b6:	85 e0       	ldi	r24, 0x05	; 5
+ 1b8:	80 93 b0 00 	sts	0x00B0, r24	; 0x8000b0 <__TEXT_REGION_LENGTH__+0x7e00b0>
 
 	ADC0.CTRLA = ADC_ENABLE_bm | ADC_RESSEL_10BIT_gc; /* 10-bit mode */
- 204:	80 83       	st	Z, r24
+ 1bc:	80 83       	st	Z, r24
 
 	/* Select ADC channel */
 	ADC0.MUXPOS = ADC_MUXPOS_AIN6_gc;
- 206:	86 e0       	ldi	r24, 0x06	; 6
- 208:	80 87       	std	Z+8, r24	; 0x08
+ 1be:	86 e0       	ldi	r24, 0x06	; 6
+ 1c0:	80 87       	std	Z+8, r24	; 0x08
 
 	/* Enable FreeRun mode */
 	ADC0.CTRLA |= ADC_FREERUN_bm;
- 20a:	80 81       	ld	r24, Z
- 20c:	82 60       	ori	r24, 0x02	; 2
- 20e:	80 83       	st	Z, r24
- 210:	08 95       	ret
+ 1c2:	80 81       	ld	r24, Z
+ 1c4:	82 60       	ori	r24, 0x02	; 2
+ 1c6:	80 83       	st	Z, r24
+ 1c8:	08 95       	ret
 
-00000212 <ADC0_read>:
+000001ca <ADC0_read>:
 }
 uint16_t ADC0_read(void)
 {
 	/* Clear the interrupt flag by writing 1: */
 	ADC0.INTFLAGS = ADC_RESRDY_bm;
- 212:	e0 e0       	ldi	r30, 0x00	; 0
- 214:	f6 e0       	ldi	r31, 0x06	; 6
- 216:	81 e0       	ldi	r24, 0x01	; 1
- 218:	85 87       	std	Z+13, r24	; 0x0d
+ 1ca:	e0 e0       	ldi	r30, 0x00	; 0
+ 1cc:	f6 e0       	ldi	r31, 0x06	; 6
+ 1ce:	81 e0       	ldi	r24, 0x01	; 1
+ 1d0:	85 87       	std	Z+13, r24	; 0x0d
 
 	return ADC0.RES;
- 21a:	80 89       	ldd	r24, Z+16	; 0x10
- 21c:	91 89       	ldd	r25, Z+17	; 0x11
+ 1d2:	80 89       	ldd	r24, Z+16	; 0x10
+ 1d4:	91 89       	ldd	r25, Z+17	; 0x11
 }
- 21e:	08 95       	ret
+ 1d6:	08 95       	ret
 
-00000220 <ADC0_start>:
+000001d8 <ADC0_start>:
 void ADC0_start(void)
 {
 	/* Start conversion */
 	ADC0.COMMAND = ADC_STCONV_bm;
- 220:	81 e0       	ldi	r24, 0x01	; 1
- 222:	80 93 0a 06 	sts	0x060A, r24	; 0x80060a <__TEXT_REGION_LENGTH__+0x7e060a>
- 226:	08 95       	ret
+ 1d8:	81 e0       	ldi	r24, 0x01	; 1
+ 1da:	80 93 0a 06 	sts	0x060A, r24	; 0x80060a <__TEXT_REGION_LENGTH__+0x7e060a>
+ 1de:	08 95       	ret
 
-00000228 <ADC0_conersionDone>:
+000001e0 <ADC0_conersionDone>:
 }
 bool ADC0_conersionDone(void)
 {
 	return (ADC0.INTFLAGS & ADC_RESRDY_bm);
- 228:	80 91 0d 06 	lds	r24, 0x060D	; 0x80060d <__TEXT_REGION_LENGTH__+0x7e060d>
+ 1e0:	80 91 0d 06 	lds	r24, 0x060D	; 0x80060d <__TEXT_REGION_LENGTH__+0x7e060d>
 }
- 22c:	81 70       	andi	r24, 0x01	; 1
+ 1e4:	81 70       	andi	r24, 0x01	; 1
+ 1e6:	08 95       	ret
+
+000001e8 <__vector_14>:
+int readFreq;
+
+
+
+ISR(TCB0_INT_vect)
+{
+ 1e8:	1f 92       	push	r1
+ 1ea:	0f 92       	push	r0
+ 1ec:	0f b6       	in	r0, 0x3f	; 63
+ 1ee:	0f 92       	push	r0
+ 1f0:	11 24       	eor	r1, r1
+ 1f2:	0b b6       	in	r0, 0x3b	; 59
+ 1f4:	0f 92       	push	r0
+ 1f6:	8f 93       	push	r24
+ 1f8:	9f 93       	push	r25
+ 1fa:	ef 93       	push	r30
+ 1fc:	ff 93       	push	r31
+	TCB0.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
+ 1fe:	e0 e0       	ldi	r30, 0x00	; 0
+ 200:	fb e0       	ldi	r31, 0x0B	; 11
+ 202:	81 e0       	ldi	r24, 0x01	; 1
+ 204:	86 83       	std	Z+6, r24	; 0x06
+	
+	// DO SOMETHING, maybe read from TCB0.CCMP????
+	//TCB0.CCMP // holds the compare, capture, and top value
+	readPulseWidth = TCB0.CCMP;
+ 206:	84 85       	ldd	r24, Z+12	; 0x0c
+ 208:	95 85       	ldd	r25, Z+13	; 0x0d
+ 20a:	80 93 18 40 	sts	0x4018, r24	; 0x804018 <readPulseWidth>
+ 20e:	90 93 19 40 	sts	0x4019, r25	; 0x804019 <readPulseWidth+0x1>
+	
+}
+ 212:	ff 91       	pop	r31
+ 214:	ef 91       	pop	r30
+ 216:	9f 91       	pop	r25
+ 218:	8f 91       	pop	r24
+ 21a:	0f 90       	pop	r0
+ 21c:	0b be       	out	0x3b, r0	; 59
+ 21e:	0f 90       	pop	r0
+ 220:	0f be       	out	0x3f, r0	; 63
+ 222:	0f 90       	pop	r0
+ 224:	1f 90       	pop	r1
+ 226:	18 95       	reti
+
+00000228 <PORT_init>:
+
+
+void PORT_init(void)
+{
+	// Setter PIN0 som output (PWM-out)
+	PORTD.DIRSET = PIN0_bm | PIN1_bm | PIN4_bm | PIN3_bm;
+ 228:	8b e1       	ldi	r24, 0x1B	; 27
+ 22a:	80 93 61 04 	sts	0x0461, r24	; 0x800461 <__TEXT_REGION_LENGTH__+0x7e0461>
  22e:	08 95       	ret
 
 00000230 <USART3_init>:
+}
+
 void USART3_init(void)
 {
 	// RX input and TX output
@@ -429,17 +433,17 @@ int main(void)
 	
 	// PWM initialize
 	PORT_init();
- 264:	0e 94 ec 00 	call	0x1d8	; 0x1d8 <PORT_init>
+ 264:	0e 94 14 01 	call	0x228	; 0x228 <PORT_init>
 	TCA0_init();
- 268:	0e 94 d8 00 	call	0x1b0	; 0x1b0 <TCA0_init>
+ 268:	0e 94 a2 00 	call	0x144	; 0x144 <TCA0_init>
 	TCB0_init();
- 26c:	0e 94 a2 00 	call	0x144	; 0x144 <TCB0_init>
+ 26c:	0e 94 b6 00 	call	0x16c	; 0x16c <TCB0_init>
 	
 	// ADC initialize
 	ADC0_init();
- 270:	0e 94 f0 00 	call	0x1e0	; 0x1e0 <ADC0_init>
+ 270:	0e 94 cc 00 	call	0x198	; 0x198 <ADC0_init>
 	ADC0_start();
- 274:	0e 94 10 01 	call	0x220	; 0x220 <ADC0_start>
+ 274:	0e 94 ec 00 	call	0x1d8	; 0x1d8 <ADC0_start>
 	
 	sei(); // Enable Global Interrupts
  278:	78 94       	sei
@@ -447,13 +451,13 @@ int main(void)
 	while (1)
 	{
 		if (ADC0_conersionDone())
- 27a:	0e 94 14 01 	call	0x228	; 0x228 <ADC0_conersionDone>
+ 27a:	0e 94 f0 00 	call	0x1e0	; 0x1e0 <ADC0_conersionDone>
  27e:	88 23       	and	r24, r24
  280:	e1 f3       	breq	.-8      	; 0x27a <main+0x26>
 		{
 			// Read potentiometer
 			uint16_t adc_value = ADC0_read();
- 282:	0e 94 09 01 	call	0x212	; 0x212 <ADC0_read>
+ 282:	0e 94 e5 00 	call	0x1ca	; 0x1ca <ADC0_read>
  286:	8c 01       	movw	r16, r24
 			// Convert ADC-value to PWM signal
 			uint16_t fanSpeed = ((20.0/1023.0)*adc_value);
