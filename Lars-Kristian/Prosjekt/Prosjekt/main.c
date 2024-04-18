@@ -74,24 +74,48 @@ void TCA0_init(void)
 	//set waveform output on PORT D
 	PORTMUX.TCAROUTEA = PORTMUX_TCA0_PORTD_gc;
 	
-	// enable compare channel 0 and set single-slope PWM mode
-	TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP0EN_bm | TCA_SINGLE_WGMODE_SINGLESLOPE_gc;
+	// enable compare channel 0, 1 and set single-slope PWM mode
+	TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP0EN_bm | TCA_SINGLE_CMP1EN_bm | TCA_SINGLE_WGMODE_SINGLESLOPE_gc;
 	
+	 // enable split mode
+    TCA0.SPLIT.CTRLD = TCA_SPLIT_SPLITM_bm; 
+	
+	// enable compare channel 0 for the higher byte, enable compare channel 0 for the lower byte
+	TCA0.SPLIT.CTRLB = TCA_SPLIT_HCMP0EN_bm | TCA_SPLIT_LCMP0EN_bm | TCA_SPLIT_HCMP1EN_bm | TCA_SPLIT_LCMP1EN_bm;    
+	
+	
+	// L0 = PIN0, L1=PIN1, H0=PIN3, H1=PIN4
+	// set the PWM frequencies and duty cycles
+    TCA0.SPLIT.LPER = PERIOD_FREQUENCY;                          
+    TCA0.SPLIT.LCMP0 = DUTY_CYCLE_MIN_VALUE;                           
+    TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
+    TCA0.SPLIT.HCMP0 = DUTY_CYCLE_MIN_VALUE;
+	
+	//TCA0.SPLIT.LPER = PERIOD_FREQUENCY;                          
+    TCA0.SPLIT.LCMP1 = DUTY_CYCLE_MIN_VALUE;                           
+    //TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
+    TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE; 
+	
+	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc    /* set clock source (sys_clk/16) */
+                     | TCA_SPLIT_ENABLE_bm;         /* start timer */
+	
+	/*
 	// set PWM frequency
 	TCA0.SINGLE.PERBUF = PERIOD_FREQUENCY;
 	
 	TCA0.SINGLE.CMP0BUF = DUTY_CYCLE_MIN_VALUE; // Controls width PWM-signal
 
 	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV4_gc | TCA_SINGLE_ENABLE_bm;// set clock source(sys_clk/4) and start timer
+	*/
 	
 }
 void PORT_init(void)
 {
 	// Setter PIN0 som output (PWM-out)
-	PORTD.DIRSET = PIN0_bm;
+	PORTD.DIRSET = PIN0_bm | PIN1_bm | PIN4_bm | PIN3_bm;
 
 	// Setter PIN1 som input (TACH)
-	PORTD.DIRCLR = PIN1_bm;
+	//PORTD.DIRCLR = PIN1_bm;
 }
 void ADC0_init(void)
 {
@@ -177,14 +201,35 @@ int main(void)
 			uint16_t adc_value = ADC0_read();
 			// Convert ADC-value to PWM signal
 			uint16_t fanSpeed = ((20.0/1023.0)*adc_value);
-			//printf("%d\r\n", adc_value);
+			printf("%d\r\n", adc_value);
 			printf("%d\r\n", fanSpeed);
 			printf("%d\r\n", readPulseWidth);
 			printf("\r\n");
 			printf("\r\n");
-			TCA0.SINGLE.CMP0BUF = fanSpeed; // Controls width PWM-signal
+			//TCA0.SINGLE.CMP0BUF = fanSpeed; // Controls width PWM-signal
+			TCA0.SPLIT.LCMP0 = fanSpeed;
+			
+			if (adc_value > 950)
+			{
+				TCA0.SPLIT.HCMP0 = 15;
+			}
+			else if (adc_value > 800)
+			{
+				TCA0.SPLIT.LCMP1 = 10;
+			}
+			else if (adc_value > 700)
+			{
+				TCA0.SPLIT.HCMP1 = 16;
+			}
+			else
+			{
+				TCA0.SPLIT.LCMP1 = DUTY_CYCLE_MIN_VALUE;
+				TCA0.SPLIT.HCMP0 = DUTY_CYCLE_MIN_VALUE;
+				TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE;
+			}
 			
 			//_delay_ms(1000);
 		}
+		
 	}
 }
