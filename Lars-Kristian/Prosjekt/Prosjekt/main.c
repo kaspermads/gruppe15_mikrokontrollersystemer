@@ -5,10 +5,10 @@
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5) // Macro for baud rate
 
 // PWM config
-#define PERIOD_FREQUENCY 20 // 0x01A0
+#define PERIOD_FREQUENCY 40 // 0x01A0
 // Calculated based on duty cycle(%) = Ton/(Tperiod)*100%
 #define DUTY_CYCLE_MIN_VALUE 0 // MIN value
-#define DUTY_CYCLE_MAX_VALUE 20 // MAX value
+#define DUTY_CYCLE_MAX_VALUE 40 // MAX value
 
 // ADC config
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5) // Macro for å beregne baudrate
@@ -33,8 +33,6 @@ void PORT_init(void);
 
 uint16_t readPulseWidth;
 int readFreq;
-
-
 
 ISR(TCB0_INT_vect)
 {
@@ -102,10 +100,10 @@ int main(void)
 			// Read potentiometer
 			uint16_t adc_value = ADC0_read();
 			// Convert ADC-value to PWM signal
-			uint16_t fanSpeed = ((20.0/1023.0)*adc_value);
-			printf("%d\r\n", adc_value);
-			printf("%d\r\n", fanSpeed);
-			printf("%d\r\n", readPulseWidth);
+			uint16_t fanSpeed = ((40.0/1023.0)*adc_value);
+			printf("ADC Value: %d\r\n", adc_value);
+			printf("Fan speed: %d\r\n", fanSpeed);
+			printf("PWM read: %d\r\n", readPulseWidth);
 			printf("\r\n");
 			printf("\r\n");
 			//TCA0.SINGLE.CMP0BUF = fanSpeed; // Controls width PWM-signal

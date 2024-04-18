@@ -40,7 +40,7 @@ void TCA0_init(void)
     //TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
     TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE; 
 	
-	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/16), and start timer         
+	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/4), and start timer         
 	
 	/*
 	// set PWM frequency
@@ -57,7 +57,7 @@ void TCA0_init(void)
 void TCB0_init(void)
 {
 	PORTB.DIR &= ~PIN4_bm;
-	PORTB.PIN4CTRL = PORT_PULLUPEN_bm;
+	PORTB.PIN4CTRL |= PORT_PULLUPEN_bm;
 	
 	TCB0.CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_TCA0_gc;	// enable timer/counter TCB0 and use clock from TCA0
 	TCB0.CTRLB = TCB_CNTMODE_PW_gc;	// set timer mod to input capture frequency and PWM measurement mode
@@ -72,8 +72,6 @@ void TCB0_init(void)
 	//   CHANNEL0
 	
 }
-
-
 
 
 #endif /* TCN_H_ */
