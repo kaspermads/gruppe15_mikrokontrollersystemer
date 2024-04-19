@@ -1,20 +1,6 @@
 
 #define F_CPU 4000000UL	// Define CPU-frequency
 
-// USART
-
-
-// PWM config
-#define PERIOD_FREQUENCY 40 // 0x01A0
-// Calculated based on duty cycle(%) = Ton/(Tperiod)*100%
-#define DUTY_CYCLE_MIN_VALUE 0 // MIN value
-#define DUTY_CYCLE_MAX_VALUE 40 // MAX value
-
-// ADC config
-//#define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5) // Macro for å beregne baudrate
-#define RTC_PERIOD 511 // RTC Period
-
-
 // Including libraries
 #include <avr/io.h>
 #include <util/delay.h>
@@ -28,11 +14,11 @@
 // Preprocessing
 void PORT_init(void);
 
-
-
+// Variables
 uint16_t readPulseWidth;
-int readFreq;
+uint16_t readFreq;
 
+// TCB0 interrupt function
 ISR(TCB0_INT_vect)
 {
 	TCB0.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
@@ -43,7 +29,6 @@ ISR(TCB0_INT_vect)
 	
 }
 
-
 void PORT_init(void)
 {
 	// Setter PIN0 som output (PWM-out)
@@ -52,10 +37,6 @@ void PORT_init(void)
 	// Setter PIN1 som input (TACH)
 	//PORTD.DIRCLR = PIN1_bm;
 }
-
-
-
-
 
 int main(void)
 {

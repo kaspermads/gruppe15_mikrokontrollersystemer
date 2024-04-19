@@ -9,6 +9,13 @@
 #ifndef TCN_H_
 #define TCN_H_
 
+// PWM config
+#define PERIOD_FREQUENCY 40 // 0x01A0
+// Calculated based on duty cycle(%) = Ton/(Tperiod)*100%
+#define DUTY_CYCLE_MIN_VALUE 0 // MIN value
+#define DUTY_CYCLE_MAX_VALUE 40 // MAX value
+
+
 void TCA0_init(void);
 void TCB0_init(void);
 

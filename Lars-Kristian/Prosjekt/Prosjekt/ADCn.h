@@ -9,6 +9,9 @@
 #ifndef ADCN_H_
 #define ADCN_H_
 
+// ADC config
+#define RTC_PERIOD 511 // RTC Period
+
 void ADC0_init(void);
 uint16_t ADC0_read(void);
 void ADC0_start(void);

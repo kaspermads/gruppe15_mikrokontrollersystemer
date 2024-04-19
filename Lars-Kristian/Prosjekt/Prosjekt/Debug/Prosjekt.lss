@@ -19,7 +19,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 00002f2b  00000000  00000000  00005671  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000059b  00000000  00000000  0000859c  2**0
+  8 .debug_line   0000059c  00000000  00000000  0000859c  2**0
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  0000011c  00000000  00000000  00008b38  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -376,10 +376,10 @@ void USART3_init(void)
  21a:	08 95       	ret
 
 0000021c <__vector_14>:
-
 uint16_t readPulseWidth;
-int readFreq;
+uint16_t readFreq;
 
+// TCB0 interrupt function
 ISR(TCB0_INT_vect)
 {
  21c:	1f 92       	push	r1
@@ -422,7 +422,6 @@ ISR(TCB0_INT_vect)
 
 0000025c <PORT_init>:
 
-
 void PORT_init(void)
 {
 	// Setter PIN0 som output (PWM-out)
@@ -432,8 +431,8 @@ void PORT_init(void)
  262:	08 95       	ret
 
 00000264 <main>:
-
-
+	//PORTD.DIRCLR = PIN1_bm;
+}
 
 int main(void)
 {
