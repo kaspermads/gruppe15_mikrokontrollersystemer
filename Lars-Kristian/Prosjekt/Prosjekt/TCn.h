@@ -22,6 +22,9 @@ void TCB0_init(void);
 
 void TCA0_init(void)
 {
+	// PORTD pins for output PWM-signals.
+	PORTD.DIRSET = PIN0_bm | PIN1_bm | PIN4_bm | PIN3_bm;
+	
 	//set waveform output on PORT D
 	PORTMUX.TCAROUTEA = PORTMUX_TCA0_PORTD_gc;
 	

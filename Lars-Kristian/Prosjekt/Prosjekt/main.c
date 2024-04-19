@@ -29,22 +29,12 @@ ISR(TCB0_INT_vect)
 	
 }
 
-void PORT_init(void)
-{
-	// Setter PIN0 som output (PWM-out)
-	PORTD.DIRSET = PIN0_bm | PIN1_bm | PIN4_bm | PIN3_bm;
-
-	// Setter PIN1 som input (TACH)
-	//PORTD.DIRCLR = PIN1_bm;
-}
-
 int main(void)
 {
 	file_stream();  // Create file stream for USART
 	USART3_init();	// USART3 initialize
 	
 	// PWM initialize
-	PORT_init();
 	TCA0_init();
 	TCB0_init();
 	
