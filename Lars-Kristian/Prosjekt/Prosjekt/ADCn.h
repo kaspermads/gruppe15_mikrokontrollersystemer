@@ -56,5 +56,26 @@ bool ADC0_conersionDone(void)
 }
 
 
+// For testing
+
+// if (adc_value > 950)
+// {
+// 	TCA0.SPLIT.HCMP0 = 15;
+// }
+// else if (adc_value > 800)
+//{
+	//TCA0.SPLIT.LCMP1 = 10;
+//}
+// else if (adc_value > 700)
+// {
+// 	TCA0.SPLIT.HCMP1 = 16;
+// }
+// else
+// {
+// 	TCA0.SPLIT.LCMP1 = DUTY_CYCLE_MIN_VALUE;
+// 	TCA0.SPLIT.HCMP0 = DUTY_CYCLE_MIN_VALUE;
+// 	TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE;
+// }
+
 
 #endif /* ADCN_H_ */
