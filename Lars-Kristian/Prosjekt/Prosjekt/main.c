@@ -111,7 +111,7 @@ uint32_t PWM_freq_to_RPM(uint32_t PWM_onperiode)
 	return ((F_CPU * 60)/(4 * 4 * PWM_onperiode));
 }
 
-// For predicting failures with fans
+// Calculating average RPM at max fan speed
 void average_values_for_tach()
 {
 	// SETT DETTE I IF MED FLAGG???
@@ -147,14 +147,24 @@ void average_values_for_tach()
 			break;
 		}
 	}
-		
 	average_read_value_fan1 = sum_RPM_fan1 / num_of_readings;
 	average_read_value_fan2 = sum_RPM_fan2 / num_of_readings;
 	
 	printf("Number of readings: %d\r\n", num_of_readings);
 	printf("Gjennomsnitt: %d\r\n", average_read_value_fan1);
-	
 	printf("\r\n");
 	printf("\r\n");
 }
 
+// Predicting failures with fans
+void prediction_error()
+{
+	// Read value from EEPROM
+	
+	// Call function to get the average fanspeed(2 fans) and save in variables
+	
+	// Formula for prediction of error
+	
+	// Under 90% set of a alarm
+	
+}
