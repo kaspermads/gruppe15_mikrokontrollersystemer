@@ -25,47 +25,22 @@
 #include <avr/interrupt.h>
 #include <stdbool.h> // For ADC
 #include "Usart.h"
-#include "Menysystem.h"
+#include "MenySystem.h"
 #include "fanStates.h"
 #include "TCn.h"
 #include "I2C_temperature.h"
 
 
-//USART
-static int USART3_printChar(char c, FILE *stream);
-void USART3_sendChar(char c);
-void USART3_sendString(char *str);
-char USART3_readChar(void);
-void USART3_init(void);
-void executeCommand(uint8_t command_number, char *command);
-void read_commands();
-
-//MenySystemBib
-void printHomeScreen();
-void PrintSelectFanMode();
-void printOverview();
-void printSelectFan();
-
-//states
-void fanOff();
-void fanAuto();
-void fanManual();
-void handleFansInAuto();
-int returnRpmInModeAuto(int temperature);
-	
-char command[MAX_COMMAND_LEN];
-int temperature = 25; //test temperature
-
-
 // Preprocessing
-void PORT_init(void);
 uint16_t pwm_to_rpm1();
 uint16_t pwm_to_rpm2();
+
 uint16_t pulseWidthReadings1[100];
 uint16_t pulseWidthReadings2[100];
+
+
 uint8_t pulseWidthIndex1 = 0;
 uint8_t pulseWidthIndex2 = 0;
-
 
 
 uint16_t rpm1;
