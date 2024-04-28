@@ -120,19 +120,34 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="fanStates.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="I2C_temperature.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="I2C_temperature.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Menysystem.h">
+    <Compile Include="Menysystem.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="fanStates.h">
+    <Compile Include="fanStates.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="MenySystem.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="TCn.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="TCn.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Usart.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Usart.h">
