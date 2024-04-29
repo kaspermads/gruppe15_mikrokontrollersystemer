@@ -11,14 +11,26 @@
 #include <stdio.h>	// For printf and sizeof
 #include "USARTn1.h"
 
-uint8_t EEMEM start_address_controller = 0x00;
-uint8_t EEMEM start_address_fan1 = 0x30;
+void status_eeprom();
+void write_to_EEPROM(uint16_t value);
+uint16_t read_from_EEPROM();
 
-uint8_t skrevet = 20;
-uint8_t lest;
+uint16_t EEMEM start_address_controller = 0x00;
+uint16_t EEMEM start_address_fan1 = 0x30;
+
+uint16_t EEMEM address_fan1 = 10;
+uint16_t EEMEM address_fan2 = 20;
+
+
+uint16_t stored_data_fan1 = 12645;
+uint16_t stored_data_fan2 = 12239;
+
+uint16_t read_value_EE_fan1;
+uint16_t read_value_EE_fan2;
 
 // Checks if memory(EEPROM) is ready.
-void status_eeprom(){
+void status_eeprom()
+{
 	while(1)
 	{
 		if (eeprom_is_ready())
@@ -32,25 +44,24 @@ void status_eeprom(){
 	}
 }
 
-void write_to_EEPROM(uint8_t value){
-	uint8_t datasize = sizeof(value);
+void write_to_EEPROM(uint16_t value){
+	//uint8_t datasize = sizeof(value);
 	
 	status_eeprom();
 	
-	eeprom_update_block((void*) &value,(void*) &start_address_fan1, datasize);
+	printf("Her skrevet: %d\r\n", value);
+	eeprom_write_word((uint16_t*)address_fan1, value);
 	
 }
 
-uint8_t read_from_EEPROM()
+uint16_t read_from_EEPROM()
 {
-	uint8_t test_lest;
-	uint8_t datasize = sizeof(test_lest);
-	printf("Størrelse: %d\r\n", datasize);
+	uint16_t read_value;
 	
 	status_eeprom();
 	
-	eeprom_read_block((void *) &test_lest,(void*) &start_address_controller, datasize);
-	return test_lest;
+	read_value = eeprom_read_word((uint16_t*) address_fan1);
+	return read_value;
 }
 
 int main(void)
@@ -58,17 +69,22 @@ int main(void)
 	
 	file_stream();  // Create file stream for USART
 	USART3_init();	// USART3 initialize
-    
-	write_to_EEPROM(skrevet);
 	
-	lest = read_from_EEPROM();
+    //uint16_t skrevet1 = skrevet;
+	//write_to_EEPROM(stored_data_fan1);
+	
+	//read_value_EE_fan2 = read_from_EEPROM();
+	status_eeprom();
+	read_value_EE_fan1 = eeprom_read_word((uint16_t*) address_fan1);
+	status_eeprom();
+	read_value_EE_fan2 = eeprom_read_word((uint16_t*) address_fan2);
 	
     while (1) 
     {
-		printf("Skrevet verdi: %d\r\n", skrevet);
-		printf("Lest verdi: %d\r\n", lest);
+		printf("Lest verdi vifte 1: %d\r\n", read_value_EE_fan1);
+		printf("Lest verdi vifte 2: %d\r\n", read_value_EE_fan2);
 		printf("\r\n");
-		printf("\r\n");
-    }
+		printf("\r\n");    
+	}
 }
 

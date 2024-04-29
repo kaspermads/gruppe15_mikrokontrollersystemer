@@ -51,7 +51,17 @@ void TCA0_init(void)
     //TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
     TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE; 
 	
-	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/4), and start timer
+	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/4), and start timer         
+	
+	/*
+	// set PWM frequency
+	TCA0.SINGLE.PERBUF = PERIOD_FREQUENCY;
+	
+	TCA0.SINGLE.CMP0BUF = DUTY_CYCLE_MIN_VALUE; // Controls width PWM-signal
+
+	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV4_gc | TCA_SINGLE_ENABLE_bm;// set clock source(sys_clk/4) and start timer
+	*/
+	
 }
 
 
@@ -67,8 +77,11 @@ void TCB0_init(void)
 	
 	TCB0.EVCTRL = TCB_CAPTEI_bm | TCB_FILTER_bm; // Capture event input enable
 	
+	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
 	EVSYS.CHANNEL0 = EVSYS_CHANNEL0_PORTB_PIN4_gc; //	input event channel 0, port b on pin 4
 	EVSYS.USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc; // connects channel 0(portb pin0????) specific to TCB0 input capture mode
+	//   CHANNEL0
+	
 }
 
 
@@ -77,6 +90,7 @@ void TCB1_init(void)
 	PORTB.DIR &= ~PIN5_bm;
 	PORTB.PIN5CTRL |= PORT_PULLUPEN_bm;
 	
+	
 	TCB1.CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_TCA0_gc;	// enable timer/counter TCB0 and use clock from TCA0
 	TCB1.CTRLB = TCB_CNTMODE_PW_gc;	// set timer mod to input capture frequency and PWM measurement mode
 	
@@ -84,9 +98,13 @@ void TCB1_init(void)
 	
 	TCB1.EVCTRL = TCB_CAPTEI_bm | TCB_FILTER_bm ; // Capture event input enable
 	
+	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
 	EVSYS.CHANNEL1 = EVSYS_CHANNEL1_PORTB_PIN5_gc; //	input event channel 1, port b on pin 5
 	EVSYS.USERTCB1CAPT = EVSYS_USER_CHANNEL1_gc; // connects channel 0(portb pin0????) specific to TCB0 input capture mode
+	//   CHANNEL0
 }
+
+
 
 
 #endif /* TCN_H_ */
