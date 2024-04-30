@@ -19,7 +19,9 @@ volatile uint16_t counter;
 uint16_t previous_RPM_fan1 = 12400;
 uint16_t previous_RPM_fan2 = 12400;
 
-// Burde kanskje flyttes til main??
+//get value from UART
+uint8_t threshold_percentage = 90;
+
 uint16_t read_value_EE_fan1;
 uint16_t read_value_EE_fan2;
 
@@ -33,7 +35,7 @@ typedef struct {
 void RTC_init(void);
 FanSpeeds average_values_for_tach(void);
 void predict_error();
-uint8_t alarm(uint8_t percentage);
+uint8_t alarm(uint8_t percentage, uint8_t threshold);
 uint8_t calculate_percentage(float old_value, uint16_t current_value);
 
 // Calculating average RPM at max fan speed
@@ -113,32 +115,40 @@ void predict_error()
 	printf("old fan 2: %d\r\n", old_value_fan1);
 	
 	// Percentage for prediction of error
-	uint8_t percentage_to_compare_fan1 = calculate_percentage(old_value_fan1, current_RPM_value_fan1);
-	uint8_t percentage_to_compare_fan2 = calculate_percentage(old_value_fan2, current_RPM_value_fan2);
+	uint8_t percentage_fan1_eeprom = calculate_percentage(old_value_fan1, current_RPM_value_fan1);
+	uint8_t percentage_fan2_eeprom = calculate_percentage(old_value_fan2, current_RPM_value_fan2);
+	
+	uint8_t percentage_fan1_previous = calculate_percentage(previous_RPM_fan1, current_RPM_value_fan1);
+	uint8_t percentage_fan2_previous = calculate_percentage(previous_RPM_fan2, current_RPM_value_fan2);
 	
 	// For testing
-	printf("PROSENT fan 1: %d\r\n", percentage_to_compare_fan1);
-	printf("PROSENT fan 2: %d\r\n", percentage_to_compare_fan2);
+	printf("PROSENT fan 1: %d\r\n", percentage_fan1_eeprom);
+	printf("PROSENT fan 2: %d\r\n", percentage_fan2_eeprom);
 	
 	// Send a threshold value can work
 	// Under 90% set of a alarm
-	uint8_t fan1_alarm =  alarm(percentage_to_compare_fan1);
-	uint8_t fan2_alarm = alarm(percentage_to_compare_fan2);
-	// For testing
-	printf("STATUS fan 1: %d\r\n", fan1_alarm);
-	printf("STATUS fan 2: %d\r\n", fan2_alarm);
+	uint8_t fan1_alarm_long_term =  alarm(percentage_fan1_eeprom, threshold_percentage);
+	uint8_t fan2_alarm_long_term = alarm(percentage_fan2_eeprom, threshold_percentage);
 	
-	if (fan1_alarm == 1)
+	uint8_t fan1_alarm_short_term =  alarm(percentage_fan1_eeprom, 90);
+	uint8_t fan2_alarm_short_term = alarm(percentage_fan2_eeprom, 90);
+	
+	// For testing
+	printf("STATUS fan 1: %d\r\n", fan1_alarm_long_term);
+	printf("STATUS fan 2: %d\r\n", fan2_alarm_long_term);
+	
+	if (fan1_alarm_long_term == 1)
 	{
 		// What alarm do we want?
 		printf("ALARM fan 1!! \r\n");
 		
 	}
-	if (fan2_alarm == 1)
+	if (fan2_alarm_long_term == 1)
 	{
 		//what alarm do we want?
 		printf("ALARM fan 2!! \r\n");
 	}
+	// Add if-statements for short term failure
 	
 	// Updates the short term value to predict instant failure
 	previous_RPM_fan1 = current_RPM_value_fan1;
@@ -147,9 +157,9 @@ void predict_error()
 }
 
 // this function can take in a threshold
-uint8_t alarm(uint8_t percentage)
+uint8_t alarm(uint8_t percentage, uint8_t threshold)
 {
-	if (percentage < 90)
+	if (percentage < threshold)
 	{
 		return 1;
 	}

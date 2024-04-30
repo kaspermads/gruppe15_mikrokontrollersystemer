@@ -33,6 +33,10 @@ void status_eeprom()
 	}
 }
 
+
+/* The functions below were only used in the process to load values manually 
+into EEPROM
+*/
 void write_to_EEPROM(uint16_t value)
 {
 	status_eeprom();
