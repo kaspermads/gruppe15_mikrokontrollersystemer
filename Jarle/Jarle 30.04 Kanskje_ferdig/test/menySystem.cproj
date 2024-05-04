@@ -120,10 +120,22 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Error_Prediction.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Error_Prediction.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="fanStates.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="I2C_temperature.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="I2C_temperature.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Menysystem.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Menysystem.h">
@@ -135,10 +147,19 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="pwm_conversion.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="save_to_eeprom.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="TCn.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="TCn.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Usart.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Usart.h">

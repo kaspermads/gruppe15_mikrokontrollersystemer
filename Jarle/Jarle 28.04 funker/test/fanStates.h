@@ -8,14 +8,9 @@
 
 #ifndef FANSTATES_H_
 #define FANSTATES_H_
+
 #include "Usart.h"
 
-#define MAX_VALUE
-void printHomeScreen();
-
-
-uint16_t pwm_to_rpm1();
-uint16_t pwm_to_rpm2();
 
 //saved states
 enum mode SavedFan1State;
@@ -40,7 +35,14 @@ int temperature;
 #define FAN_RPM_MEDIUM 60
 #define FAN_RPM_HIGH 79
 
-     
+void printHomeScreen();
+
+
+uint16_t pwm_to_rpm1();
+uint16_t pwm_to_rpm2();
+
+
+
 enum mode { //definerer states for vifter
 	MANUAL,
 	OFF,
@@ -48,18 +50,25 @@ enum mode { //definerer states for vifter
 };
 
 const char *state_names[] = { "MANUAL", "OFF", "AUTO" }; //Defines as names to print to Uart
-	
-	
+
+
 typedef struct rpm {
 	enum mode State;
-	uint16_t rpm; 
-	}Fan;
-	
+	uint16_t rpm;
+}Fan;
 
-	Fan fan1 = {OFF, 0 };
-	Fan fan2 = {OFF, 0 };
-	Fan fan3 = {OFF, 0 };
-	Fan fan4 = {OFF, 0 };
+
+Fan fan1 = {OFF, 0 };
+Fan fan2 = {OFF, 0 };
+Fan fan3 = {OFF, 0 };
+Fan fan4 = {OFF, 0 };
+
+
+
+
+//#include "fanStates.h"
+
+
 
 
 
@@ -193,9 +202,9 @@ void startFansAfterDiagnose(){
 	if (SavedFan1State == OFF) {
 		fan1.State = OFF;
 		TCA0_SPLIT_LCMP0 = 0;
-	} else if (SavedFan1State == AUTO){
+		} else if (SavedFan1State == AUTO){
 		fan1.State = AUTO;
-	} else if (SavedFan1State == MANUAL){
+		} else if (SavedFan1State == MANUAL){
 		fan1.State = MANUAL;
 	}
 	
@@ -233,13 +242,11 @@ void startFansAfterDiagnose(){
 
 
 void saveFanModes(){
-		SavedFan1State = fan1.State;
-		SavedFan2State = fan2.State;
-		SavedFan3State = fan3.State;
-		SavedFan4State = fan4.State;
+	SavedFan1State = fan1.State;
+	SavedFan2State = fan2.State;
+	SavedFan3State = fan3.State;
+	SavedFan4State = fan4.State;
 }
-
-
 
 
 #endif /* FANSTATES_H_ */

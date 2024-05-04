@@ -30,31 +30,31 @@
 #include "TCn.h"
 #include "I2C_temperature.h"
 
-
-//USART
-static int USART3_printChar(char c, FILE *stream);
-void USART3_sendChar(char c);
-void USART3_sendString(char *str);
-char USART3_readChar(void);
-void USART3_init(void);
-void executeCommand(uint8_t command_number, char *command);
-void read_commands();
-
-//MenySystemBib
-void printHomeScreen();
-void PrintSelectFanMode();
-void printOverview();
-void printSelectFan();
-
-//states
-void fanOff();
-void fanAuto();
-void fanManual();
-void handleFansInAuto();
-int returnRpmInModeAuto(int temperature);
-	
-char command[MAX_COMMAND_LEN];
-int temperature = 25; //test temperature
+// 
+// //USART
+// static int USART3_printChar(char c, FILE *stream);
+// void USART3_sendChar(char c);
+// void USART3_sendString(char *str);
+// char USART3_readChar(void);
+// void USART3_init(void);
+// void executeCommand(uint8_t command_number, char *command);
+// void read_commands();
+// 
+// //MenySystemBib
+// void printHomeScreen();
+// void PrintSelectFanMode();
+// void printOverview();
+// void printSelectFan();
+// 
+// //states
+// void fanOff();
+// void fanAuto();
+// void fanManual();
+// void handleFansInAuto();
+// int returnRpmInModeAuto(int temperature);
+// 	
+// char command[MAX_COMMAND_LEN];
+// int temperature = 25; //test temperature
 
 
 // Preprocessing
