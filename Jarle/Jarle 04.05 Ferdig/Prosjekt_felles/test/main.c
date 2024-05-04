@@ -154,7 +154,6 @@ int main(void)
 	
 	printHomeScreen();
 	
-	//TCA0_SPLIT_LCMP0 = 60;
 
 	
 	while(1){

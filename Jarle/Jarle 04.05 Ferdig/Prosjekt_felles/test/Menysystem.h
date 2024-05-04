@@ -24,7 +24,8 @@ int temperature;
 uint8_t diagnoseIsRunning;
 uint8_t changeAlarmDeviation;
 
-// printing alternatives in the menu
+
+
 void printHomeScreen()
 {
 	printf("\r\n");  
@@ -37,7 +38,7 @@ void printHomeScreen()
 	
 }
 
-// printing alternatives in controller
+
 void PrintSelectFanMode()
 {
 	printf("Type wanted mode\r\n");
@@ -45,14 +46,22 @@ void PrintSelectFanMode()
 	printf("Alternatives: off, auto, manual\r\n"); 
 }
 
- //printing overview of fanstates, fan rpm values and temperature
+
+
+/**
+ * @brief: Prints the fans rpm and state. Also prints the temperature
+ state_names is used to convert from an index to a representative name
+ * 
+ * 
+ * @return void
+ */
 void printOverview()
 {
 	
 	printf("OVERVIEW \r\n");
 	printf("\r\n");
 	printf("Fan 1 rpm: %d\r\n", fan[1].rpm);
-	printf("Fan 1 state: %s\r\n",  state_names[fan[1].State]);
+	printf("Fan 1 state: %s\r\n",  state_names[fan[1].State]); 
 	printf("Fan 2 rpm: %d\r\n", fan[2].rpm);
 	printf("Fan 2 state: %s\r\n", state_names[fan[2].State]);
 	printf("Fan 3 rpm: %d\r\n", fan[3].rpm);
@@ -60,7 +69,7 @@ void printOverview()
 	printf("Fan 4 rpm: %d\r\n", fan[4].rpm);
 	printf("Fan 4 state: %s\r\n", state_names[fan[4].State]);
 	
-	temperature = AHT10_read();
+	temperature = AHT10_read(); //reads the temperature
 	printf("Temperature: %d\r\n", temperature);
 	printf("\r\n");
 	printf("\r\n");
@@ -68,7 +77,7 @@ void printOverview()
 	printHomeScreen();
 }
 
-// printing alternatives for fans
+
 void printSelectFan()
 {
 	printf("Controller\r\n");
@@ -78,8 +87,23 @@ void printSelectFan()
 
 
 	
-// main function for controlling the fans and alarm. Based on predefined commands from UART.
 
+
+
+
+/**
+ * @brief: Main function for controlling the fans and alarm. Based on predefined commands from UART.
+	Different modes and fans is selected by chosenMode(auto, off or manual) and chosenFan(fan1-fan4) 
+	Manual mode expects the alternatives: low, medium, high or fan speed: 0-100 and executes based on given input 
+	Auto mode sets the fan to mode Auto.
+	Off mode turns the fan off
+	Alarm gives the opportunity to change the deviation percentage of tear and wear alarm for each fan
+ * 
+ * @param command_number: Index given by predefined valid commands in static char commands [ NUMBER_OF_COMMANDS ][ MAX_COMMAND_LEN ] in Usart.h
+ * @param command: Actual command given by UART
+ * 
+ * @return void
+ */
 void executeCommand(uint8_t command_number, char *command)
 {
 	if (diagnoseIsRunning) {
@@ -87,7 +111,7 @@ void executeCommand(uint8_t command_number, char *command)
 	}
 	else {
 	
-	switch ( command_number )
+	switch ( command_number )// based on index given by predefined valid UART commands
 	{
 		case 0:
 		printf("Received command: fan1\r\n");
@@ -114,39 +138,38 @@ void executeCommand(uint8_t command_number, char *command)
 		break ;
 		
 		case 4:
-		printf("Received command: off\r\n");
+		printf("Received command: off\r\n"); //turns the selected fan off
 		chosenModeIsManual = 0;
 		setFanToOff();
 		break ;
 		
 		case 5:
-		printf("Received command: manual\r\n");
+		printf("Received command: manual\r\n"); //sets chosenModeIsManual to true. Breaks and expects another command
 		printf("Type wanted rpm mode\r\n");
 		printf("Alternatives: low, medium, high or fan speed: 0-100 \r\n");
 		chosenModeIsManual = 1;
 		break ;
 		
 		case 6:
-		printf("Received command: auto\r\n");
+		printf("Received command: auto\r\n");//Set the selected fan to mode Auto
 		chosenModeIsManual = 0;
 		setFanToAuto();
 		break ;
 		
 		case 7:
-		printf("Received command: overview\r\n");
+		printf("Received command: overview\r\n"); // reads the rpm values of the fans and calls a function to print overview
 		fan[1].rpm = pwm_to_rpm(pulseWidthReadings1);
 		fan[2].rpm = pwm_to_rpm(pulseWidthReadings2);
-		
 		
 		printOverview();
 		break ;
 		
 		case 8:
 		printf("Received command: controller\r\n");
-		printSelectFan();
+		printSelectFan(); //calls a function to print the alternative fans
 		break ;
 		
-		case 12: // if command = alarm
+		case 12: // if command = alarm. Display current deviation percentage
 		changeAlarmDeviation = 1;
 		printf("Type wanted deviation percentage for wear and tear alarm \n\r");
 		printf("Current alarm deviation percentage is: %d\n\r", threshold_percentage);
@@ -154,7 +177,7 @@ void executeCommand(uint8_t command_number, char *command)
 		
 		default :
 		
-		if (changeAlarmDeviation){
+		if (changeAlarmDeviation){// changes the deviation percentage based on UART command
 				threshold_percentage = atoi(command); //change alarm deviaton for alarm type long
 				changeAlarmDeviation = 0;
 				printf("wear and tear alarm devation percentage is changed to: %d\n\r", threshold_percentage);
@@ -163,8 +186,7 @@ void executeCommand(uint8_t command_number, char *command)
 			
 		
 		
-		
-		if(chosenModeIsManual)
+		if(chosenModeIsManual)// Sets the selected fan to rpm value choosed. Low, medium, high or 0-100
 		{
 			switch (command_number)
 			{
@@ -193,14 +215,12 @@ void executeCommand(uint8_t command_number, char *command)
 				
 				duty_cycle_input = atoi(command);
 				printf("%d\r\n", duty_cycle_input);
-				if (duty_cycle_input >= 0 && duty_cycle_input <= 100)
+				if (duty_cycle_input >= 0 && duty_cycle_input <= 100) //Return the value choosed (0-100%) 
 				{
 					uint16_t new_duty_cycle = (duty_cycle_input / 100.0) * FAN_RPM_HIGH;
 					printf("%d\r\n", new_duty_cycle);
-					// Set the duty cycle to the new value
-					// Assuming TCA0_SPLIT_LCMP0 is where the duty cycle is set
 					manual_rpm_value = new_duty_cycle;
-					setFanToManual();
+					setFanToManual(); //execute the command and set the fan rpm to choosen rpm value 
 				}
 				else
 				{
@@ -215,7 +235,7 @@ void executeCommand(uint8_t command_number, char *command)
 		}
 		
 		
-		else printf("unknown command \r\n");
+		else printf("unknown command \r\n"); //if command is not equal to predefined valid UART commands
 		
 	}
 

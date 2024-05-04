@@ -1,29 +1,21 @@
-/*
- * states.h
- *
- * Created: 17.04.2024 14:50:26
- *  Author: jarle
- */ 
-
 
 #ifndef FANSTATES_H_
 #define FANSTATES_H_
 #include "Usart.h"
 #include "pwm_to_rpm.h"
 #define MAX_VALUE
-void printHomeScreen();
+#define NUM_FANS 5
+
+
+
 
 int temperature;
-//saved states
-enum mode SavedFan1State;
-enum mode SavedFan2State;
-enum mode SavedFan3State;
-enum mode SavedFan4State;
+int savedFanStates[NUM_FANS]; //saved fanStates before diagnose
 
-uint8_t chosenModeIsManual;
+uint8_t chosenModeIsManual; 
 uint8_t chosenFan;
 
-int manual_rpm_value;
+int manual_rpm_value; //rpm value written to 
 int auto_rpm_value;
 
 
@@ -33,25 +25,26 @@ int auto_rpm_value;
 #define FAN_RPM_MEDIUM 60
 #define FAN_RPM_HIGH 79
 
-	
-enum mode { //definerer states for vifter
+
+// Defines fanStates 
+enum mode { 
 	MANUAL,
 	OFF,
 	AUTO
 };
 
-const char *state_names[] = { "MANUAL", "OFF", "AUTO" }; //Defines as names to print to Uart
+const char *state_names[] = { "MANUAL", "OFF", "AUTO" }; //Defines as names for better understanding 
 	
-
-// struct to save read rpm value
+	
+// Struct to store and read rpm values for the different fans
 typedef struct rpm {
 	enum mode State; 
-	uint16_t rpm;
-	uint16_t saved_rpm;
+	uint16_t rpm; //value to be read from the tachometer 
+	uint16_t saved_rpm; //value to be stored for restart of fans after diagnose
 	}Fan;
 	
 	
-	
+	// Declaring the fans
 	Fan fan[NUM_FANS] = {
 		{OFF, 0}, //unused
 		{OFF, 0}, // fan[1]
@@ -64,11 +57,17 @@ typedef struct rpm {
 
 
 
+/**
+ * @brief: Sets chosen fan to mode OFF and turns off the fan. ChosenFan is given as an UART command
+ * 
+ * 
+ * @return void
+ */
 void setFanToOff() {
-	for (int i = 1; i < NUM_FANS; i++) {
+	for (int i = 1; i < NUM_FANS; i++) { //Sets the choosed fan to OFF
 		if (chosenFan == i) {
 			fan[i].State = OFF;
-			switch (i + 1) { // Adjust the fan number for printing
+			switch (i) { 
 				case 1:
 				TCA0_SPLIT_LCMP0 = 0;
 				printf("fan1 is now in mode: off\n");
@@ -85,8 +84,8 @@ void setFanToOff() {
 				TCA0_SPLIT_HCMP1 = 0;
 				printf("fan4 is now in mode: off\n");
 				break;
+				
 				default:
-				// Handle invalid fan index
 				break;
 			}
 		}
@@ -94,6 +93,14 @@ void setFanToOff() {
 	printHomeScreen();
 }
 
+
+/**
+ * @brief: Set chosen fan to mode AUTO. ChosenFan is given as an UART command
+	Adjusting the rpm is handled in main.c
+ * 
+ * 
+ * @return void
+ */
 void setFanToAuto() {
 	for (int i = 1; i < NUM_FANS; i++) {
 		if (chosenFan == i) {
@@ -103,13 +110,23 @@ void setFanToAuto() {
 	}
 	printHomeScreen();
 }
+
+
+/**
+ * @brief: Set chosen fan to mode MANUAL. ChosenFan is given as an UART command
+	Sets the rpm value of the chosen fan(0-100) based on manual_rpm_value given by UART
+	Saves the rpm value to be used for restart of the fans after diagnose
+ * 
+ * 
+ * @return void
+ */
 void setFanToManual() {
 	for (int i = 1; i < NUM_FANS; i++) {
 		if (chosenFan == i) {
 			fan[i].State = MANUAL;
-			switch (i) { // Adjust the fan number for printing
+			switch (i) { // argument is chosenFan 
 				case 1:
-				TCA0_SPLIT_LCMP0 = manual_rpm_value;
+				TCA0_SPLIT_LCMP0 = manual_rpm_value; //sets the rpm value of the fan
 				fan[1].saved_rpm = manual_rpm_value;
 				printf("fan1 is now in mode: Manual \n");
 				break;
@@ -138,6 +155,13 @@ void setFanToManual() {
 }
 
 
+/**
+ * @brief: 
+ * 
+ * @param temperature
+ * 
+ * @return: Returns calculated rpm value adjustes by temperature 
+ */
 int autoRPMmode(uint16_t temperature) {
 	
 	int a = 1.975;  // Slope of the line (change in RPM per degree Celsius)
@@ -165,6 +189,13 @@ int autoRPMmode(uint16_t temperature) {
 }
 
 
+
+/**
+ * @brief: Changes the rpm value of the fans based on return value of autoRPMmode(temperature)
+ * 
+ * 
+ * @return void
+ */
 void handleFansInAuto(){ //change rpm based on temperature if fan.State is Auto
 	if (fan[1].State == AUTO){
 		TCA0_SPLIT_LCMP0 = autoRPMmode(temperature);
@@ -187,45 +218,45 @@ void handleFansInAuto(){ //change rpm based on temperature if fan.State is Auto
 void startFansAfterDiagnose(){
 	
 	//startup fan1
-	if (SavedFan1State == OFF) {
+	if (savedFanStates[1] == OFF) {
 		fan[1].State = OFF;
 		TCA0_SPLIT_LCMP0 = 0;
-	} else if (SavedFan1State == AUTO){
+	} else if (savedFanStates[1] == AUTO){
 		fan[1].State = AUTO;
-	} else if (SavedFan1State == MANUAL){
+	} else if (savedFanStates[1] == MANUAL){
 		fan[1].State = MANUAL;
 		TCA0_SPLIT_LCMP0 = fan[1].saved_rpm;
 	}
 	
 	//startup fan2
-	if (SavedFan2State == OFF) {
+	if (savedFanStates[2] == OFF) {
 		fan[2].State = OFF;
 		TCA0_SPLIT_LCMP1 = 0;
-		} else if (SavedFan2State == AUTO){
+		} else if (savedFanStates[2] == AUTO){
 		fan[2].State = AUTO;
-		} else if (SavedFan2State == MANUAL){
+		} else if (savedFanStates[2] == MANUAL){
 		fan[2].State = MANUAL;
 		TCA0_SPLIT_LCMP1 = fan[2].saved_rpm;
 	}
 	
 	//startup fan3
-	if (SavedFan3State == OFF) {
+	if (savedFanStates[3] == OFF) {
 		fan[3].State = OFF;
 		TCA0_SPLIT_HCMP0 = 0;
-		} else if (SavedFan3State == AUTO){
+		} else if (savedFanStates[3] == AUTO){
 		fan[3].State = AUTO;
-		} else if (SavedFan3State == MANUAL){
+		} else if (savedFanStates[3] == MANUAL){
 		fan[3].State = MANUAL;
 		TCA0_SPLIT_HCMP0 = fan[3].saved_rpm;
 	}
 	
 	//startup fan4
-	if (SavedFan4State == OFF) {
+	if (savedFanStates[4] == OFF) {
 		fan[4].State = OFF;
 		TCA0_SPLIT_HCMP1 = 0;
-		} else if (SavedFan4State == AUTO){
+		} else if (savedFanStates[4] == AUTO){
 		fan[4].State = AUTO;
-		} else if (SavedFan4State == MANUAL){
+		} else if (savedFanStates[4] == MANUAL){
 		fan[4].State = MANUAL;
 		TCA0_SPLIT_HCMP1 = fan[4].saved_rpm;
 	}
@@ -233,11 +264,16 @@ void startFansAfterDiagnose(){
 }
 
 
+/**
+ * @brief: Iterates through the different fans and saves the fanStates in an array based on the current fanStates 
+ * 
+ * 
+ * @return void
+ */
 void saveFanModes(){
-		SavedFan1State = fan[1].State;
-		SavedFan2State = fan[2].State;
-		SavedFan3State = fan[3].State;
-		SavedFan4State = fan[4].State;
+		for (int i = 1; i < NUM_FANS; i++) {
+			savedFanStates[i] = fan[i].State;
+		}
 }
 
 

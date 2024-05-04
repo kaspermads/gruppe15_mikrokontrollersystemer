@@ -42,13 +42,13 @@ static char commands [ NUMBER_OF_COMMANDS ][ MAX_COMMAND_LEN ] = {
 	"alarm"
 
 	
-	// Checks if command is equal to one of the predifined commands in the array commands[]. 
+	// Checks if command is equal to one of the predefined commands in the array commands[]. 
 	// Return the index of the command received in the array or 255 if none
 	};uint8_t compareCommands (char *src ){
 		
 	for (uint8_t i = 0; i < NUMBER_OF_COMMANDS ; i ++) {
 		if( strcmp (src , commands[i]) == 0) {
-			return i; 
+			return i; // return the index of the command when valid 
 		}
 	}
 	return 255; // if the command is not valid
@@ -83,7 +83,14 @@ void USART3_sendString(char *str)
 }
 
 
-char USART3_readChar(void) //reading characters from UART
+/**
+ * @brief: Reading characters from UART
+ * 
+ * @param 
+ * 
+ * @return: char 
+ */
+char USART3_readChar(void) 
 {
 	while (!(USART3.STATUS & USART_RXCIF_bm))
 	{
@@ -96,13 +103,14 @@ char USART3_readChar(void) //reading characters from UART
 }
 
 
+
 void USART3_init(void)
 {
 	
 	PORTB.DIRSET = PIN0_bm ; //TX -pin as output
 	PORTB.DIRCLR = PIN1_bm ; //RX -pin as input
 	USART3.CTRLA |= (1 << USART_RXCIE_bp);
-	USART3.BAUD = (uint16_t)USART3_BAUD_RATE(9600);
+	USART3.BAUD = (uint16_t)USART3_BAUD_RATE(9600); // sets the baud rate 
 	USART3.CTRLB |= USART_RXEN_bm | USART_TXEN_bm ; // Enable both TX and RX
 	stdout = &USART_stream;
 
@@ -112,7 +120,13 @@ void USART3_init(void)
 
 
 
-void read_commands() //Reads Uart when enter is pressed
+/**
+ * @brief: Combines the char to an array. Calls a function to execute different commands based on the array
+ * 
+ * 
+ * @return void
+ */
+void read_commands() 
 {
 	char command[MAX_COMMAND_LEN];
 	static uint8_t index = 0;
@@ -129,7 +143,7 @@ void read_commands() //Reads Uart when enter is pressed
 		command[index] = '\0';
 		index = 0;
 
-		executeCommand(compareCommands(command), command); // executes actions based on command as an argument
+		executeCommand(compareCommands(command), command); // executes actions based on command as an argument. Two arguments: One as the array and one used as index number for a switch case 
 		
 		
 	}
