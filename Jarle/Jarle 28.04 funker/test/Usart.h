@@ -28,10 +28,6 @@
 int rpm_value;
 uint8_t manualFlag;
 
-uint8_t FAN1Flag;
-uint8_t FAN2Flag;
-uint8_t FAN3Flag;
-uint8_t FAN4Flag;
 
 
 static char commands [ NUMBER_OF_COMMANDS ][ MAX_COMMAND_LEN ] = { //defines the valid Uart commands 

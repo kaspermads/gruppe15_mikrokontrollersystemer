@@ -20,8 +20,7 @@
 #define FAN4_bm 0b00001000
 
 //predeclaring TCB0/TCB1 calculating rpm value
-uint16_t pwm_to_rpm1();
-uint16_t pwm_to_rpm2();
+uint16_t pwm_to_rpm(uint16_t* pulseWidthReadings);
 
 uint16_t pulseWidthReadings1[100];
 uint16_t pulseWidthReadings2[100];
@@ -139,8 +138,8 @@ void executeCommand(uint8_t command_number, char *command)
 		
 		case 7:
 		printf("Received command: overview\r\n");
-		fan1.rpm = pwm_to_rpm1();
-		fan2.rpm = pwm_to_rpm2();
+		fan1.rpm = pwm_to_rpm(pulseWidthReadings1);
+		fan2.rpm = pwm_to_rpm(pulseWidthReadings2);
 		
 		
 		printOverview();

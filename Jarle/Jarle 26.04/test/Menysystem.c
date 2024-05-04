@@ -10,6 +10,13 @@
 #include "Usart.h"
 #include "fanStates.h"
 #include "MenySystem.h"
+#include <avr/io.h>
+#include <util/delay.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <avr/interrupt.h>
+#include <stdint.h>
 
 
 

@@ -52,7 +52,7 @@ void TCA0_init(void)
     //TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
     TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE; 
 	
-	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV2_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/4), and start timer         
+	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV2_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/2), and start timer         
 	
 	/*
 	// set PWM frequency

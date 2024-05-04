@@ -151,6 +151,9 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="pwm_to_rpm.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="save_to_eeprom.h">
       <SubType>compile</SubType>
     </Compile>

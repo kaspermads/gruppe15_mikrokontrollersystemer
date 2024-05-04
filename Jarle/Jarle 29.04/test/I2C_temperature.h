@@ -87,7 +87,7 @@ static void I2C_M_write(uint8_t addr, uint8_t data)
 	if(TWI0.MSTATUS & TWI_RXACK_bm) 
 	{
 		// target is full
-		//printf("target NACK \n");
+		printf("target NACK \n");
 	}
 	/* Issue a stop condition */
 	TWI0.MCTRLB |= TWI_MCMD_STOP_gc;

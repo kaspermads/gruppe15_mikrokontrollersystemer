@@ -7,8 +7,16 @@
 
 
 
-#include "Usart.h"
+#include "USART.h"
 #include "fanStates.h"
+#include "TCn.h"
+#include <avr/io.h>
+#include <util/delay.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <avr/interrupt.h>
+#include <stdint.h>
 
      
 

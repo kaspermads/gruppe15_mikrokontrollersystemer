@@ -8,10 +8,7 @@
 #define F_CPU 4000000
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5) 
 // PWM config
-#define PERIOD_FREQUENCY 79 // 0x01A0
-// Calculated based on duty cycle(%) = Ton/(Tperiod)*100%
-#define DUTY_CYCLE_MIN_VALUE 0 // MIN value
-#define DUTY_CYCLE_MAX_VALUE 79 // MAX value
+
 
 // ADC config
 #define RTC_PERIOD 511 // RTC Period
@@ -22,6 +19,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+
 #include <avr/interrupt.h>
 #include <stdbool.h> // For ADC
 #include "Usart.h"

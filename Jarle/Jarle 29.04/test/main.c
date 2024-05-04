@@ -5,13 +5,13 @@
 * Created: 31.01.2024 12:23:48
 * Author : jarle
 */
-#define F_CPU 4000000
+#define F_CPU 4000000UL
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5) 
 // PWM config
-#define PERIOD_FREQUENCY 79 // 0x01A0
+#define PERIOD_FREQUENCY 159 // 0x01A0
 // Calculated based on duty cycle(%) = Ton/(Tperiod)*100%
 #define DUTY_CYCLE_MIN_VALUE 0 // MIN value
-#define DUTY_CYCLE_MAX_VALUE 79 // MAX value
+#define DUTY_CYCLE_MAX_VALUE 159 // MAX value
 
 // ADC config
 #define RTC_PERIOD 511 // RTC Period
@@ -32,27 +32,27 @@
 #include "Error_Prediction.h"
 
 
-//USART
-static int USART3_printChar(char c, FILE *stream);
-void USART3_sendChar(char c);
-void USART3_sendString(char *str);
-char USART3_readChar(void);
-void USART3_init(void);
-void executeCommand(uint8_t command_number, char *command);
-void read_commands();
-
-//MenySystemBib
-void printHomeScreen();
-void PrintSelectFanMode();
-void printOverview();
-void printSelectFan();
-
-//states
-void fanOff();
-void fanAuto();
-void fanManual();
-void handleFansInAuto();
-int returnRpmInModeAuto(int temperature);
+// USART
+// static int USART3_printChar(char c, FILE *stream);
+// void USART3_sendChar(char c);
+// void USART3_sendString(char *str);
+// char USART3_readChar(void);
+// void USART3_init(void);
+// void executeCommand(uint8_t command_number, char *command);
+// void read_commands();
+// 
+// MenySystemBib
+// void printHomeScreen();
+// void PrintSelectFanMode();
+// void printOverview();
+// void printSelectFan();
+// 
+// states
+// void fanOff();
+// void fanAuto();
+// void fanManual();
+// void handleFansInAuto();
+// int returnRpmInModeAuto(int temperature);
 	
 char command[MAX_COMMAND_LEN];
 
@@ -62,8 +62,8 @@ char command[MAX_COMMAND_LEN];
 void PORT_init(void);
 uint16_t pwm_to_rpm1();
 uint16_t pwm_to_rpm2();
-uint16_t pulseWidthReadings1[100];
-uint16_t pulseWidthReadings2[100];
+uint16_t pulseWidthReadings1[300];
+uint16_t pulseWidthReadings2[300];
 uint8_t pulseWidthIndex1 = 0;
 uint8_t pulseWidthIndex2 = 0;
 
@@ -105,7 +105,7 @@ ISR(TCB0_INT_vect)// starting interrupt for reading pwm from fan1
 	TCB0.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
 	pulseWidthReadings1[pulseWidthIndex1] = TCB0.CCMP;
 	pulseWidthIndex1++;
-	if (pulseWidthIndex1 >= 100) {
+	if (pulseWidthIndex1 >= 300) {
 		pulseWidthIndex1 = 0; // Reset index when all readings are stored
 	}
 	
@@ -121,7 +121,7 @@ ISR(TCB1_INT_vect)// starting interrupt for reading pwm from fan1
 	TCB1.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
 	pulseWidthReadings2[pulseWidthIndex2] = TCB1.CCMP;
 	pulseWidthIndex2++;
-	if (pulseWidthIndex2 >= 100) {
+	if (pulseWidthIndex2 >= 300) {
 		pulseWidthIndex2 = 0; // Reset index when all readings are stored
 	}
 	
@@ -142,7 +142,7 @@ uint16_t average(uint16_t* array, uint8_t size) {
 
 uint16_t pwm_to_rpm1()
 {
-	uint16_t pulseWidthAverage1 = average(pulseWidthReadings1, 100);
+	uint16_t pulseWidthAverage1 = average(pulseWidthReadings1, 300);
 	uint32_t rpm1 = ((F_CPU*60)/(4*pulseWidthAverage1*2));
 	return (uint16_t)rpm1;
 	
@@ -151,8 +151,8 @@ uint16_t pwm_to_rpm1()
 
 uint16_t pwm_to_rpm2()
 {
-	uint16_t pulseWidthAverage2 = average(pulseWidthReadings2, 100);
-	uint32_t rpm2 = ((F_CPU*60)/(4*pulseWidthAverage2*2));
+	uint16_t pulseWidthAverage2 = average(pulseWidthReadings2, 300);
+	uint32_t rpm2 = ((F_CPU*60)/(4*pulseWidthAverage2));
 	return (uint16_t)rpm2;
 	
 }
@@ -172,7 +172,6 @@ int main(void)
 	TCB1_init();
 		
 	// I2C initialize 
-
 	TWI0_M_init();
 	AHT10_init();
 	
@@ -182,22 +181,21 @@ int main(void)
 	
 	printHomeScreen(); 
 	
-		//TCA0_SPLIT_LCMP0 = 60;
 
 	
 	while(1){
 		
 		
-		if(counter == 20)
-		{   
-			saveFanModes();
-			diagnoseIsRunning = 1;
-			predict_error();
-			startFansAfterDiagnose();
-			diagnoseIsRunning = 0;
-			counter = 0;
-		}
-		
+// 		if(counter == 20)
+// 		{   
+// 			saveFanModes();
+// 			diagnoseIsRunning = 1;
+// 			predict_error();
+// 			startFansAfterDiagnose();
+// 			diagnoseIsRunning = 0;
+// 			counter = 0;
+// 		}
+// 		
 		
 		
 		handleFansInAuto(); //changes the rpm of the fans in mode auto based on temperature
