@@ -8,10 +8,7 @@
 #define F_CPU 4000000
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5)
 // PWM config
-#define PERIOD_FREQUENCY 79 // 0x01A0
-// Calculated based on duty cycle(%) = Ton/(Tperiod)*100%
-#define DUTY_CYCLE_MIN_VALUE 0 // MIN value
-#define DUTY_CYCLE_MAX_VALUE 79 // MAX value
+
 
 // ADC config
 #define RTC_PERIOD 511 // RTC Period
@@ -24,56 +21,55 @@
 #include <stdlib.h>
 #include <avr/interrupt.h>
 #include <stdbool.h> // For ADC
-#include "Usart.h"
-#include "Menysystem.h"
-#include "fanStates.h"
-#include "TCn.h"
-#include "I2C_temperature.h"
+
 #include "Error_Prediction.h"
+#include "I2C_temperature.h"
+#include "Menysystem.h"
 #include "save_to_eeprom.h"
+#include "TCn.h"
+#include "pwm_conversion.h"
 
 
 
-//USART
-static int USART3_printChar(char c, FILE *stream);
-void USART3_sendChar(char c);
-void USART3_sendString(char *str);
-char USART3_readChar(void);
-void USART3_init(void);
-void executeCommand(uint8_t command_number, char *command);
-void read_commands();
-
-//MenySystemBib
-void printHomeScreen();
-void PrintSelectFanMode();
-void printOverview();
-void printSelectFan();
-
-//states
-void fanOff();
-void fanAuto();
-void fanManual();
-void handleFansInAuto();
-int returnRpmInModeAuto(int temperature);
-
-char command[MAX_COMMAND_LEN];
+// USART
+// static int USART3_printChar(char c, FILE *stream);
+// void USART3_sendChar(char c);
+// void USART3_sendString(char *str);
+// char USART3_readChar(void);
+// void USART3_init(void);
+// void executeCommand(uint8_t command_number, char *command);
+// void read_commands();
+// 
+// MenySystemBib
+// void printHomeScreen();
+// void PrintSelectFanMode();
+// void printOverview();
+// void printSelectFan();
+// 
+// states
+// void fanOff();
+// void fanAuto();
+// void fanManual();
+// void handleFansInAuto();
+// int returnRpmInModeAuto(int temperature);
+// 
+// char command[MAX_COMMAND_LEN];
 
 
 
 // Preprocessing
-void PORT_init(void);
-uint16_t pwm_to_rpm1();
-uint16_t pwm_to_rpm2();
-uint16_t pulseWidthReadings1[100];
-uint16_t pulseWidthReadings2[100];
-uint8_t pulseWidthIndex1 = 0;
-uint8_t pulseWidthIndex2 = 0;
+// void PORT_init(void);
+// uint16_t pwm_to_rpm2();
 
-uint8_t diagnoseIsRunning;
 
-uint16_t rpm1;
-uint16_t rpm2;
-
+// uint8_t pulseWidthIndex1 = 0;
+// uint8_t pulseWidthIndex2 = 0;
+// 
+// uint8_t diagnoseIsRunning;
+// 
+// uint16_t rpm1;
+// uint16_t rpm2;
+// 
 
 
 
@@ -104,6 +100,7 @@ ISR(USART3_RXC_vect)
 
 ISR(TCB0_INT_vect)// starting interrupt for reading pwm from fan1
 {
+	uint8_t pulseWidthIndex1;
 	TCB0.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
 	pulseWidthReadings1[pulseWidthIndex1] = TCB0.CCMP;
 	pulseWidthIndex1++;
@@ -119,7 +116,8 @@ ISR(TCB0_INT_vect)// starting interrupt for reading pwm from fan1
 
 
 ISR(TCB1_INT_vect)// starting interrupt for reading pwm from fan1
-{
+{	
+	uint8_t pulseWidthIndex2;
 	TCB1.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
 	pulseWidthReadings2[pulseWidthIndex2] = TCB1.CCMP;
 	pulseWidthIndex2++;
@@ -142,22 +140,22 @@ uint16_t average(uint16_t* array, uint8_t size) {
 }
 
 
-uint16_t pwm_to_rpm1()
+uint16_t pwm_to_rpm(uint16_t* pulseWidthReadings)
 {
-	uint16_t pulseWidthAverage1 = average(pulseWidthReadings1, 100);
-	uint32_t rpm1 = ((F_CPU*60)/(4*pulseWidthAverage1*2));
-	return (uint16_t)rpm1;
+	uint16_t pulseWidthAverage = average(pulseWidthReadings, 100);
+	uint32_t rpm = ((F_CPU*60)/(4*pulseWidthAverage*2));
+	return (uint16_t)rpm;
 	
 }
 
-
-uint16_t pwm_to_rpm2()
-{
-	uint16_t pulseWidthAverage2 = average(pulseWidthReadings2, 100);
-	uint32_t rpm2 = ((F_CPU*60)/(4*pulseWidthAverage2*2));
-	return (uint16_t)rpm2;
-	
-}
+// 
+// uint16_t pwm_to_rpm2()
+// {
+// 	uint16_t pulseWidthAverage2 = average(pulseWidthReadings2, 100);
+// 	uint32_t rpm2 = ((F_CPU*60)/(4*pulseWidthAverage2*2));
+// 	return (uint16_t)rpm2;
+// 	
+// }
 
 
 

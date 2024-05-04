@@ -9,6 +9,7 @@
 #ifndef ERROR_PREDICTION_H_
 #define ERROR_PREDICTION_H_
 
+#include "pwm_to_rpm.h"
 
 // Variables
 volatile uint16_t RPM_fan1;
@@ -68,8 +69,8 @@ FanSpeeds average_values_for_tach()
 	
 	while (counter - compare_counter_time <= 10)
 	{
-		sum_RPM_fan1 += pwm_to_rpm1();												
-		sum_RPM_fan2 += pwm_to_rpm2();
+		sum_RPM_fan1 += pwm_to_rpm(pulseWidthReadings1);												
+		sum_RPM_fan2 += pwm_to_rpm(pulseWidthReadings2);
 		
 		num_of_readings ++;
 	}
