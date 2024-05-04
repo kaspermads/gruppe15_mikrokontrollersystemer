@@ -72,7 +72,7 @@ void TCB0_init(void)
 	PORTB.PIN4CTRL |= PORT_PULLUPEN_bm;
 	
 	TCB0.CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_TCA0_gc;	// enable timer/counter TCB0 and use clock from TCA0
-	TCB0.CTRLB = TCB_CNTMODE_PW_gc;	// set timer mod to input capture PWM measurement mode
+	TCB0.CTRLB = TCB_CNTMODE_PW_gc;	// set timer mod to input capture frequency and PWM measurement mode
 	
 	TCB0.INTCTRL = TCB_CAPT_bm; // interrupt enabled for capture
 	
