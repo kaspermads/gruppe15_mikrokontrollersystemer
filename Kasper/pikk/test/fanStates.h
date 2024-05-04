@@ -9,13 +9,12 @@
 #ifndef FANSTATES_H_
 #define FANSTATES_H_
 #include "Usart.h"
+#include "pwm_to_rpm.h"
 #define MAX_VALUE
 void printHomeScreen();
 
 int temperature;
 
-uint16_t pwm_to_rpm1();
-uint16_t pwm_to_rpm2();
 
 //saved states
 enum mode SavedFan1State;

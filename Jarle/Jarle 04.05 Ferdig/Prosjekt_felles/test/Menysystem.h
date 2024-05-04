@@ -12,15 +12,11 @@
 #include "Usart.h"
 #include "fanStates.h"
 #include "Error_Prediction.h"
+#include "pwm_to_rpm.h"
 
 
 //predeclaring TCB0/TCB1 calculating rpm value
-uint16_t pwm_to_rpm1();
-uint16_t pwm_to_rpm2();
 
-
-uint16_t pulseWidthReadings1[100];
-uint16_t pulseWidthReadings2[100];
 uint16_t duty_cycle_input;
 
 int temperature;
@@ -138,8 +134,8 @@ void executeCommand(uint8_t command_number, char *command)
 		
 		case 7:
 		printf("Received command: overview\r\n");
-		fan[1].rpm = pwm_to_rpm1();
-		fan[2].rpm = pwm_to_rpm2();
+		fan[1].rpm = pwm_to_rpm(pulseWidthReadings1);
+		fan[2].rpm = pwm_to_rpm(pulseWidthReadings2);
 		
 		
 		printOverview();

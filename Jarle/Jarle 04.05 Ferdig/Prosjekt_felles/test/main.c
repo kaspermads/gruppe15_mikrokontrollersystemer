@@ -31,6 +31,7 @@
 #include "I2C_temperature.h"
 #include "Error_Prediction.h"
 #include "save_to_eeprom.h"
+#include "pwm_to_rpm.h"
 
 
 
@@ -62,18 +63,6 @@ char command[MAX_COMMAND_LEN];
 
 // Preprocessing
 void PORT_init(void);
-uint16_t pwm_to_rpm1();
-uint16_t pwm_to_rpm2();
-
-uint16_t pulseWidthReadings1[100];
-uint16_t pulseWidthReadings2[100];
-uint8_t pulseWidthIndex1 = 0;
-uint8_t pulseWidthIndex2 = 0;
-
-uint8_t diagnoseIsRunning;
-
-uint16_t rpm1;
-uint16_t rpm2;
 
 
 
@@ -135,32 +124,6 @@ ISR(TCB1_INT_vect)// starting interrupt for reading pwm from fan1
 }
 
 
-// Function to calculate the average of an array of uint16_t values
-uint16_t average(uint16_t* array, uint8_t size) {
-	uint32_t sum = 0;
-	for (uint8_t i = 0; i < size; i++) {
-		sum += array[i];
-	}
-	return (uint16_t)(sum / size);
-}
-
-
-uint16_t pwm_to_rpm1()
-{
-	uint16_t pulseWidthAverage1 = average(pulseWidthReadings1, 100);
-	uint32_t rpm1 = ((F_CPU*60)/(4*pulseWidthAverage1*2));
-	return (uint16_t)rpm1;
-	
-}
-
-
-uint16_t pwm_to_rpm2()
-{
-	uint16_t pulseWidthAverage2 = average(pulseWidthReadings2, 100);
-	uint32_t rpm2 = ((F_CPU*60)/(4*pulseWidthAverage2*2));
-	return (uint16_t)rpm2;
-	
-}
 
 
 int main(void)

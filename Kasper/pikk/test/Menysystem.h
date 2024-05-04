@@ -12,18 +12,19 @@
 #include "Usart.h"
 #include "fanStates.h"
 #include "Error_Prediction.h"
+#include "pwm_to_rpm.h"
 
 
-#define FAN1_bm 0b00000001
-#define FAN2_bm 0b00000010
-#define FAN3_bm 0b00000100
-#define FAN4_bm 0b00001000
+// #define FAN1_bm 0b00000001
+// #define FAN2_bm 0b00000010
+// #define FAN3_bm 0b00000100
+// #define FAN4_bm 0b00001000
 
 //predeclaring TCB0/TCB1 calculating rpm value
-uint16_t pwm_to_rpm(uint16_t* pulseWidthReadings);
-
-uint16_t pulseWidthReadings1[100];
-uint16_t pulseWidthReadings2[100];
+// uint16_t pwm_to_rpm(uint16_t* pulseWidthReadings);
+// 
+// uint16_t pulseWidthReadings1[100];
+// uint16_t pulseWidthReadings2[100];
 uint16_t duty_cycle_input;
 
 int temperature;
