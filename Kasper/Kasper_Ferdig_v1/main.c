@@ -35,31 +35,6 @@
 
 
 
-//USART
-static int USART3_printChar(char c, FILE *stream);
-void USART3_sendChar(char c);
-void USART3_sendString(char *str);
-char USART3_readChar(void);
-void USART3_init(void);
-void executeCommand(uint8_t command_number, char *command);
-void read_commands();
-
-//MenySystemBib
-void printHomeScreen();
-void PrintSelectFanMode();
-void printOverview();
-void printSelectFan();
-
-//states
-void setFanToOff();
-void setFanToAuto();
-void setFanToManual();
-void handleFansInAuto();
-int returnRpmInModeAuto(int temperature);
-
-char command[MAX_COMMAND_LEN];
-
-
 
 // Preprocessing
 void PORT_init(void);
@@ -101,7 +76,9 @@ ISR(TCB0_INT_vect)// starting interrupt for reading pwm from fan1
 		pulseWidthIndex1 = 0; // Reset index when all readings are stored
 	}
 	
-	
+	// DO SOMETHING, maybe read from TCB0.CCMP????
+	//TCB0.CCMP // holds the compare, capture, and top value
+	//readPulseWidth = TCB0.CCMP;
 	
 }
 
@@ -114,7 +91,11 @@ ISR(TCB1_INT_vect)// starting interrupt for reading pwm from fan1
 	if (pulseWidthIndex2 >= 100) {
 		pulseWidthIndex2 = 0; // Reset index when all readings are stored
 	}
-
+	
+	// DO SOMETHING, maybe read from TCB0.CCMP????
+	//TCB0.CCMP // holds the compare, capture, and top value
+	//readPulseWidth = TCB0.CCMP;
+	
 }
 
 
@@ -148,6 +129,7 @@ int main(void)
 	
 	printHomeScreen();
 	
+	//TCA0_SPLIT_LCMP0 = 60;
 
 	
 	while(1){

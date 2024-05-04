@@ -29,7 +29,6 @@ void PORT_init(void);
 void ADC0_init(void);
 uint16_t ADC0_read(void);
 void ADC0_start(void);
-bool ADC0_conersionDone(void);
 
 void TCA0_init(void)
 {
