@@ -13,9 +13,6 @@
 #define DUTY_CYCLE_MIN_VALUE 0 // MIN value
 #define DUTY_CYCLE_MAX_VALUE 79 // MAX value
 
-// ADC config
-#define RTC_PERIOD 511 // RTC Period
-
 
 #include <avr/io.h>
 #include <util/delay.h>
