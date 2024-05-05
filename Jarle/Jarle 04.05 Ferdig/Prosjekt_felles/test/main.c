@@ -158,7 +158,7 @@ int main(void)
 		if(counter == 3000)
 		{
 			
-			diagnoseIsRunning = 1;
+			diagnoseIsRunning = 1; //prevent UASRT commands from executing 
 			predict_error();
 			startFansAfterDiagnose();
 			diagnoseIsRunning = 0;
@@ -168,7 +168,7 @@ int main(void)
 		
 		
 		handleFansInAuto(); //changes the rpm of the fans in mode auto based on temperature
-		_delay_ms(10); //U USART requires slight delay
+		_delay_ms(10); // USART requires slight delay
 		
 		
 		
