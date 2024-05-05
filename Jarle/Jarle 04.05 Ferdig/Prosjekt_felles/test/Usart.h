@@ -1,10 +1,10 @@
-/*
- * Usart.h
- *
- * Created: 24.04.2024 10:14:06
- *  Author: jarle
- */ 
-
+/*****************************************************************************
+*    All USART setup is fetched from "Getting Started With USART"
+*    Author: Microchip
+*    Date: 2020
+*    Availability: https://github.com/microchip-pic-avr-examples/atmega4809-getting-started-with-usart-studio/blob/master/Send_Formatted_String_Using_Printf/main.c
+				   https://github.com/microchip-pic-avr-examples/atmega4809-getting-started-with-usart-studio/blob/master/Receive_Control_Commands/main.c
+****************************************************************************/
 
 #ifndef USART_H_
 #define USART_H_
@@ -25,7 +25,7 @@
 
 
 
-// predefined valid commands recieved from UART
+// Predefined valid commands received from UART
 static char commands [ NUMBER_OF_COMMANDS ][ MAX_COMMAND_LEN ] = {  
 	"fan1",
 	"fan2",
@@ -55,6 +55,11 @@ static char commands [ NUMBER_OF_COMMANDS ][ MAX_COMMAND_LEN ] = {
 }
 
 
+/**
+ * \brief Sends the char c to the TX pin, i.e through serial.
+ * 
+ * \param c A character
+ */
 void USART3_sendChar(char c)
 {
 	while (!(USART3.STATUS & USART_DREIF_bm))
@@ -71,7 +76,7 @@ static int USART3_printChar(char c,  FILE *stream)
 	return 0;
 }
 
-static FILE USART_stream = FDEV_SETUP_STREAM(USART3_printChar, NULL, _FDEV_SETUP_WRITE); //initialises a stream of characters to be sent to Uart
+static FILE USART_stream = FDEV_SETUP_STREAM(USART3_printChar, NULL, _FDEV_SETUP_WRITE); // Initializes a stream of characters to be sent to Uart
 
 
 void USART3_sendString(char *str)
@@ -84,10 +89,7 @@ void USART3_sendString(char *str)
 
 
 /**
- * @brief: Reading characters from UART
- * 
- * @param 
- * 
+ * @brief: Reading characters from UART 
  * @return: char 
  */
 char USART3_readChar(void) 
@@ -97,34 +99,34 @@ char USART3_readChar(void)
 		;
 	}
 	
-	uint8_t src = USART3.RXDATAL ;
+	uint8_t src = USART3.RXDATAL;
 	USART3_sendChar(src);
 	return src;
 }
 
 
 
+/**
+ * \brief Initiates USART, declaring the pins
+ */
 void USART3_init(void)
 {
 	
 	PORTB.DIRSET = PIN0_bm ; //TX -pin as output
 	PORTB.DIRCLR = PIN1_bm ; //RX -pin as input
 	USART3.CTRLA |= (1 << USART_RXCIE_bp);
-	USART3.BAUD = (uint16_t)USART3_BAUD_RATE(9600); // sets the baud rate 
+	USART3.BAUD = (uint16_t)USART3_BAUD_RATE(9600); // Sets the baud rate 
 	USART3.CTRLB |= USART_RXEN_bm | USART_TXEN_bm ; // Enable both TX and RX
 	stdout = &USART_stream;
 
-	
+
 }
 
 
 
-
 /**
- * @brief: Combines the char to an array. Calls a function to execute different commands based on the array
- * 
- * 
- * @return void
+ * @brief: Combines the cha cr to an array. Calls a function to execute different commands based on the array
+d
  */
 void read_commands() 
 {

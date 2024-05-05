@@ -1,9 +1,10 @@
-/*
- * MenysystemBib.h
- *
- * Created: 17.04.2024 12:56:51
- *  Author: jarle
- */ 
+/*****************************************************************************
+*    Commands idea is inspired by "Getting Started With USART"
+*    Author: Microchip
+*    Date: 2020
+*    Availability: https://github.com/microchip-pic-avr-examples/atmega4809-getting-started-with-usart-studio/blob/master/Send_Formatted_String_Using_Printf/main.c
+				   https://github.com/microchip-pic-avr-examples/atmega4809-getting-started-with-usart-studio/blob/master/Receive_Control_Commands/main.c
+****************************************************************************/
 
 
 #ifndef MENYSYSTEM_H_
@@ -75,6 +76,7 @@ void printOverview()
 	temperature = AHT10_read(); //reads the temperature
 	printf("Temperature: %d\r\n", temperature);
 	printf("\r\n");
+	
 	
 	printHomeScreen();
 }
@@ -210,18 +212,19 @@ void executeCommand(uint8_t command_number, char *command)
 				
 				default:
 				
+				// Converts string input to integer using "atoi" command
 				duty_cycle_input = atoi(command);
 				printf("%d\r\n", duty_cycle_input);
-				if (duty_cycle_input >= 0 && duty_cycle_input <= 100) //Return the value choosed (0-100%) 
+				if (duty_cycle_input >= 0 && duty_cycle_input <= 100) // Chech if input is valid
 				{
-					uint16_t new_duty_cycle = (duty_cycle_input / 100.0) * FAN_RPM_HIGH;
+					uint16_t new_duty_cycle = (duty_cycle_input / 100.0) * FAN_RPM_HIGH; // Scaled rpm value, from 0-100 to 0-79
 					printf("%d\r\n", new_duty_cycle);
 					manual_rpm_value = new_duty_cycle;
-					setFanToManual(); //execute the command and set the fan rpm to choosen rpm value 
+					setFanToManual(); // Execute the command and set the fan rpm to chosen rpm value 
 				}
 				else
-				{
-					printf("Please insert a valid duty cycle (0-100)\r\n");
+				{	
+					printf("Please insert a valid duty cycle (0-100)\r\n"); // If not a valid input
 				}
 				break;
 				
@@ -232,7 +235,7 @@ void executeCommand(uint8_t command_number, char *command)
 		}
 		
 		
-		else printf("unknown command \r\n"); //if command is not equal to predefined valid UART commands
+		else printf("unknown command \r\n"); //If command is not equal to predefined UART commands
 		
 	}
 

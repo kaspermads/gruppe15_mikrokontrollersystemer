@@ -5,7 +5,7 @@
 * Created: 31.01.2024 12:23:48
 * Author : jarle
 */
-#define F_CPU 4000000
+#define F_CPU 4000000UL
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5)
 // PWM config
 #define PERIOD_FREQUENCY 79 // 0x01A0
@@ -98,6 +98,7 @@ ISR(USART3_RXC_vect)
 	read_commands();
 }
 
+ // Interrupt for TCB0, fills pulseWidthReadings array with data from CCMP register.
 ISR(TCB0_INT_vect)// starting interrupt for reading pwm from fan1
 {
 	TCB0.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
@@ -111,7 +112,7 @@ ISR(TCB0_INT_vect)// starting interrupt for reading pwm from fan1
 	
 }
 
-
+ // Interrupt for TCB1, fills pulseWidthReadings array with data from CCMP register.
 ISR(TCB1_INT_vect)// starting interrupt for reading pwm from fan1
 {
 	TCB1.INTFLAGS = TCB_CAPT_bm; // Clear the interrupt flag
@@ -139,7 +140,6 @@ int main(void)
 	TCB1_init();
 	
 	// I2C initialize
-
 	TWI0_M_init();
 	AHT10_init();
 	
@@ -158,7 +158,7 @@ int main(void)
 	
 	while(1){
 		
-		
+		// In seconds, change to suit testing needs
 		if(counter == 3000)
 		{
 			
@@ -172,7 +172,7 @@ int main(void)
 		
 		
 		handleFansInAuto(); //changes the rpm of the fans in mode auto based on temperature
-		_delay_ms(10); //Usart er facked uten denne
+		_delay_ms(10); //U USART requires slight delay
 		
 		
 		

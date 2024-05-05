@@ -1,9 +1,9 @@
-/*
- * TCn.h
- *
- * Created: 18.04.2024 12:00:36
- *  Author: larsi
- */ 
+/*****************************************************************************
+*    TCA0 is based upon source code from "Getting Started With TCA"
+*    Author: Microchip
+*    Date: 2020
+*    Availability: https://github.com/microchip-pic-avr-examples/atmega4809-getting-started-with-tca-studio/blob/master/Generating_Two_PWM_Signals_in_Split_Mode/main.c
+****************************************************************************/
 
 
 #ifndef TCN_H_
@@ -11,23 +11,25 @@
 
 void TCA0_init(void);
 void TCB0_init(void);
+void PORT_init(void);
 
 
+/**
+ * @brief Initiates ports as output  (PWM-out)
+ */
 void PORT_init(void)
 {
-	// Setter PIN0 som output (PWM-out)
 	PORTD.DIRSET = PIN0_bm | PIN1_bm | PIN3_bm | PIN4_bm;
-
-	// Setter PIN1 som input (TACH)
-	//PORTD.DIRCLR = PIN1_bm;
 }
 
 
-
-
+/**
+ * \brief Initiates TCA0 by enabling port D as output and enabling split and compare channels
+ 
+ */
 void TCA0_init(void)
 {
-	//set waveform output on PORT D
+	// set waveform output on PORT D
 	PORTMUX.TCAROUTEA = PORTMUX_TCA0_PORTD_gc;
 	
 	// enable compare channel 0, 1 and set single-slope PWM mode
@@ -42,30 +44,25 @@ void TCA0_init(void)
 	
 	// L0 = PIN0, L1=PIN1, H0=PIN3, H1=PIN4
 	// set the PWM frequencies and duty cycles
-    TCA0.SPLIT.LPER = PERIOD_FREQUENCY;                          
+    TCA0.SPLIT.LPER = PERIOD_FREQUENCY;      
+	TCA0.SPLIT.HPER = PERIOD_FREQUENCY;
+                    
     TCA0.SPLIT.LCMP0 = DUTY_CYCLE_MIN_VALUE;                           
-    TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
     TCA0.SPLIT.HCMP0 = DUTY_CYCLE_MIN_VALUE;
-	
-	//TCA0.SPLIT.LPER = PERIOD_FREQUENCY;                          
     TCA0.SPLIT.LCMP1 = DUTY_CYCLE_MIN_VALUE;                           
-    //TCA0.SPLIT.HPER = PERIOD_FREQUENCY;                             
     TCA0.SPLIT.HCMP1 = DUTY_CYCLE_MIN_VALUE; 
 	
 	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV2_gc | TCA_SPLIT_ENABLE_bm;   // set clock source (sys_clk/4), and start timer         
 	
-	/*
-	// set PWM frequency
-	TCA0.SINGLE.PERBUF = PERIOD_FREQUENCY;
-	
-	TCA0.SINGLE.CMP0BUF = DUTY_CYCLE_MIN_VALUE; // Controls width PWM-signal
 
-	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV4_gc | TCA_SINGLE_ENABLE_bm;// set clock source(sys_clk/4) and start timer
-	*/
 	
 }
 
 
+/**
+ * \brief Enables TCB0 instance. Enables event capture on channel 0 --> pin 4 (pullup).
+
+ */
 void TCB0_init(void)
 {
 	PORTB.DIR &= ~PIN4_bm;
@@ -80,12 +77,14 @@ void TCB0_init(void)
 	
 	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
 	EVSYS.CHANNEL0 = EVSYS_CHANNEL0_PORTB_PIN4_gc; //	input event channel 0, port b on pin 4
-	EVSYS.USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc; // connects channel 0(portb pin0????) specific to TCB0 input capture mode
-	//   CHANNEL0
-	
+	EVSYS.USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc; // connects pin 4 to the capture inpuut	
 }
 
 
+/**
+ * \brief Enables TCB1 instance. Enables event capture on channel 1 --> pin 5 (pullup).
+
+ */
 void TCB1_init(void)
 {
 	PORTB.DIR &= ~PIN5_bm;
@@ -101,7 +100,7 @@ void TCB1_init(void)
 	
 	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
 	EVSYS.CHANNEL1 = EVSYS_CHANNEL1_PORTB_PIN5_gc; //	input event channel 0, port b on pin 4
-	EVSYS.USERTCB1CAPT = EVSYS_USER_CHANNEL1_gc; // connects channel 0(portb pin0????) specific to TCB0 input capture mode
+	EVSYS.USERTCB1CAPT = EVSYS_USER_CHANNEL1_gc; // connects pin 4 to the capture input
 	//   CHANNEL0
 	
 	
