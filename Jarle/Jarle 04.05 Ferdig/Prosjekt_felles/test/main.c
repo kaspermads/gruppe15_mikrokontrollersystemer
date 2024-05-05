@@ -61,10 +61,6 @@ char command[MAX_COMMAND_LEN];
 
 
 
-// Preprocessing
-void PORT_init(void);
-
-
 
 
 /**
