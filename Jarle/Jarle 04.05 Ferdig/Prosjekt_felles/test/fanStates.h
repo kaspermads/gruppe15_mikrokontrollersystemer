@@ -12,7 +12,7 @@
 
 
 int temperature;
-//int savedFanStates[NUM_FANS]; //saved fanStates before diagnose
+
 
 uint8_t chosenModeIsManual; 
 uint8_t chosenFan;
@@ -114,7 +114,7 @@ void setFanToManual() {
 			fan[chosenFan].State = MANUAL;
 			fan[chosenFan].prevState = fan[chosenFan].State;
 			
-			*(fan[chosenFan].setSpeed) = manual_rpm_value; // Set compare register to manual RPM value
+			*(fan[chosenFan].setSpeed) = manual_rpm_value; // Set register to manual RPM value
 			fan[chosenFan].saved_rpm = manual_rpm_value;
 
 		
@@ -182,16 +182,16 @@ void startFansAfterDiagnose() {
 		
 		if (fan[i].prevState == OFF) {
 			fan[i].State = OFF;
-			*(fan[i].setSpeed) = 0;
+			*(fan[i].setSpeed) = 0; //set fan speed to stored value
 			
 			} else if (fan[i].prevState == MANUAL) {
 			fan[i].State = MANUAL;
-			*(fan[i].setSpeed) = fan[i].saved_rpm;
+			*(fan[i].setSpeed) = fan[i].saved_rpm; //set fan speed to stored value
 			
 
 			} else if (fan[i].prevState == AUTO) {
 			fan[i].State = AUTO;
-			// No action needed for AUTO mode here
+			
 		}
 	}
 }
