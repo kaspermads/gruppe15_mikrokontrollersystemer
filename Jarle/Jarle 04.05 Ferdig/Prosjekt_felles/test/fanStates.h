@@ -57,10 +57,10 @@ typedef struct{
 	// Declaring the fans
 	Fan fan[NUM_FANS] = {
 		{OFF, OFF, 0, NULL, "unused",0},
-		{OFF, OFF, 0,(uint8_t*)&TCA0_SPLIT_LCMP0, "FAN1", 0},
-		{OFF, OFF, 0,(uint8_t*)&TCA0_SPLIT_LCMP1, "FAN2", 0},
-		{OFF, OFF, 0,(uint8_t*)&TCA0_SPLIT_HCMP0, "FAN3", 0},
-		{OFF, OFF, 0,(uint8_t*)&TCA0_SPLIT_HCMP1, "FAN4", 0}
+		{OFF, OFF, 0, &TCA0_SPLIT_LCMP0, "FAN1", 0},
+		{OFF, OFF, 0, &TCA0_SPLIT_LCMP1, "FAN2", 0},
+		{OFF, OFF, 0, &TCA0_SPLIT_HCMP0, "FAN3", 0},
+		{OFF, OFF, 0, &TCA0_SPLIT_HCMP1, "FAN4", 0}
 		
 	};
 
@@ -132,8 +132,8 @@ void setFanToManual() {
  */
 int autoRPMmode(uint16_t temperature) {
 	
-	int a = 1.975;  // Slope of the line (change in RPM per degree Celsius)
-	int b = -59.25; // Y-intercept of the line (RPM at 0 degrees Celsius)
+	int a = 47/40.0;  // Slope of the line (change in RPM per degree Celsius)
+	int b = -15; // Y-intercept of the line (RPM at 0 degrees Celsius)
 	
 	// Calculate RPM using the linear function: RPM = a * temperature + b
 	float auto_rpm_value = (a * temperature + b);
@@ -141,7 +141,7 @@ int autoRPMmode(uint16_t temperature) {
 	
 	if (auto_rpm_scaled_value < 30)
 	{
-		auto_rpm_scaled_value = 30;
+		auto_rpm_scaled_value = 32;
 	}
 	else if (auto_rpm_scaled_value > 79)
 	{

@@ -155,7 +155,7 @@ int main(void)
 	while(1){
 		
 		// In seconds, change to suit testing needs
-		if(counter == 3000)
+		if(counter == 30)
 		{
 			
 			diagnoseIsRunning = 1;

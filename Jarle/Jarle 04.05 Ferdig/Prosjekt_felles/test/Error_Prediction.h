@@ -122,8 +122,9 @@ void predict_error()
 	uint8_t percentage_fan2_previous = calculate_percentage(previous_RPM_fan2, current_RPM_values.fan2);
 	
 	// For testing
-	printf("PROSENT fan 1: %d\r\n", percentage_fan1_previous);
-	printf("PROSENT fan 2: %d\r\n", percentage_fan2_eeprom);
+// 	printf("%d\r\n", old_value_fan1);
+// 	printf("PROSENT fan 1: %d\r\n", percentage_fan1_previous);
+// 	printf("PROSENT fan 2: %d\r\n", percentage_fan2_eeprom);
 	
 	// Flags for alarms
 	uint8_t fan1_alarm_long_term =  alarm(percentage_fan1_eeprom, threshold_percentage);
@@ -133,8 +134,8 @@ void predict_error()
 	uint8_t fan2_alarm_short_term = alarm(percentage_fan2_previous, 90);
 	
 	// For testing
-	printf("STATUS fan 1: %d\r\n", fan1_alarm_short_term);
-	printf("STATUS fan 2: %d\r\n", fan2_alarm_long_term);
+// 	printf("STATUS fan 1: %d\r\n", fan1_alarm_short_term);
+// 	printf("STATUS fan 2: %d\r\n", fan2_alarm_long_term);
 	
 	// Check flags
 	if (fan1_alarm_long_term == 1)

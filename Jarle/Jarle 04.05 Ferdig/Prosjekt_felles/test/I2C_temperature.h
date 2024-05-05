@@ -179,8 +179,6 @@ uint8_t AHT10_read()
 	uint16_t temperature = (uint16_t)((float)tdata * 200 / 0x100000) - 50;
 	return temperature;
 
-	
-	//printf("Temperature: °C%d\n", temperature);
 }
 
 #endif /* I2C_TEMPERATURE_H_ */

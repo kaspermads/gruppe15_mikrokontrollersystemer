@@ -218,7 +218,6 @@ void executeCommand(uint8_t command_number, char *command)
 				if (duty_cycle_input >= 0 && duty_cycle_input <= 100) // Chech if input is valid
 				{
 					uint16_t new_duty_cycle = (duty_cycle_input / 100.0) * FAN_RPM_HIGH; // Scaled rpm value, from 0-100 to 0-79
-					printf("%d\r\n", new_duty_cycle);
 					manual_rpm_value = new_duty_cycle;
 					setFanToManual(); // Execute the command and set the fan rpm to chosen rpm value 
 				}

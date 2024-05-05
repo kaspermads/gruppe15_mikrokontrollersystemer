@@ -75,7 +75,7 @@ void TCB0_init(void)
 	
 	TCB0.EVCTRL = TCB_CAPTEI_bm | TCB_FILTER_bm ; // Capture event input enable
 	
-	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
+	
 	EVSYS.CHANNEL0 = EVSYS_CHANNEL0_PORTB_PIN4_gc; //	input event channel 0, port b on pin 4
 	EVSYS.USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc; // connects pin 4 to the capture inpuut	
 }
@@ -98,10 +98,9 @@ void TCB1_init(void)
 	
 	TCB1.EVCTRL = TCB_CAPTEI_bm | TCB_FILTER_bm ; // Capture event input enable
 	
-	//EVSYS.SWEVENTA = EVSYS_SWEVENTA0_bm;
 	EVSYS.CHANNEL1 = EVSYS_CHANNEL1_PORTB_PIN5_gc; //	input event channel 0, port b on pin 4
 	EVSYS.USERTCB1CAPT = EVSYS_USER_CHANNEL1_gc; // connects pin 4 to the capture input
-	//   CHANNEL0
+	
 	
 	
 
