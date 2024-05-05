@@ -1,11 +1,4 @@
 
-/*
- * save_to_eeprom.h
- *
- * Created: 29.04.2024 17:05:52
- *  Author: jarle
- */ 
-
 
 #ifndef SAVE_TO_EEPROM_H_
 #define SAVE_TO_EEPROM_H_

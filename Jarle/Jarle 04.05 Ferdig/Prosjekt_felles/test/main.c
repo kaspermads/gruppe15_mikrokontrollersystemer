@@ -13,9 +13,6 @@
 #define DUTY_CYCLE_MIN_VALUE 0 // MIN value
 #define DUTY_CYCLE_MAX_VALUE 79 // MAX value
 
-// ADC config
-#define RTC_PERIOD 511 // RTC Period
-
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -23,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/interrupt.h>
-#include <stdbool.h> // For ADC
+#include <stdbool.h>
 #include "Usart.h"
 #include "Menysystem.h"
 #include "fanStates.h"
@@ -158,7 +155,7 @@ int main(void)
 		if(counter == 30)
 		{
 			
-			diagnoseIsRunning = 1;
+			diagnoseIsRunning = 1; //prevent UASRT commands from executing 
 			predict_error();
 			startFansAfterDiagnose();
 			diagnoseIsRunning = 0;
@@ -168,7 +165,7 @@ int main(void)
 		
 		
 		handleFansInAuto(); //changes the rpm of the fans in mode auto based on temperature
-		_delay_ms(10); //U USART requires slight delay
+		_delay_ms(10); // USART requires slight delay
 		
 		
 		
