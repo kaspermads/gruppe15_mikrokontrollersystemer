@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/interrupt.h>
-#include <stdbool.h> // For ADC
+#include <stdbool.h>
 #include "Usart.h"
 #include "Menysystem.h"
 #include "fanStates.h"
